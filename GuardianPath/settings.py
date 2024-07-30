@@ -77,7 +77,17 @@ WSGI_APPLICATION = 'GuardianPath.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = local_settings.DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'navi',
+        'USER': 'user1',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
