@@ -1,7 +1,27 @@
 {% load static%}
-<!DoCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
-<title>Guardian Path</title>
-<h2>Hello World</h2>
-<img src="{% static "img/logo.png" %}"></img>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자 유형 선택</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">사용자 유형 선택</h1>
+        <div class="user-types">
+            <button class="user-type-btn">일반 사용자</button>
+            <button class="user-type-btn">엘리베이터 사용자</button>
+            <button class="user-type-btn">에스컬레이터 사용자</button>
+        </div>
+        <div class="search-box">
+            <label for="departure">출발지</label>
+            <input type="text" id="departure" placeholder="출발지 입력">
+            <label for="destination">도착지</label>
+            <input type="text" id="destination" placeholder="도착지 입력">
+            <button class="search-btn">검색</button>
+        </div>
+    </div>
+</body>
 </html>
