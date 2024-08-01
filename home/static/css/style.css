@@ -11,23 +11,53 @@ body {
 }
 
 .title {
-    color: #9b59b6;
-    font-size: 24px;
+    font-size: 52px;
     margin-bottom: 20px;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 .user-types {
     margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
 }
 
+.user-type-label {
+    display: flex;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.user-type-radio {
+    display: none;
+}
+
+
 .user-type-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: white;
     border: 1px solid #dcdcdc;
     border-radius: 10px;
     padding: 10px 20px;
-    margin: 0 10px;
+    width: 200px; /* 동일한 크기 */
+    text-align: center;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.user-type-btn i {
+    margin-right: 8px; /* 아이콘과 텍스트 사이의 간격 */
+}
+
+.user-type-radio:checked + .user-type-btn {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: white;
 }
 
 .search-box {
@@ -61,4 +91,9 @@ body {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    margin-top: 20px; /* 검색 버튼을 아래로 이동 */
+}
+
+.search-btn:hover {
+    background-color: #2980b9;
 }
