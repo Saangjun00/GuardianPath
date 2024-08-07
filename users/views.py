@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 User = get_user_model()
 
@@ -15,13 +15,16 @@ def register_view(request):
         password2 = request.POST.get('password2')
 
         if password1 != password2:
-            return HttpResponse("비밀번호가 일치하지 않습니다.")
+            messages.error(request, "비밀번호가 일치하지 않습니다.")
+            return redirect('register_view')
         
         if User.objects.filter(email=email).exists():
-            return HttpResponse("이메일이 이미 존재합니다.")
+            messages.error(request, "이메일이 이미 존재합니다.")
+            return redirect('register_view')
         
         # 사용자 생성
         User.objects.create_user(email=email, name=name, password=password1)
+        messages.success(request, "회원가입이 완료되었습니다. 로그인해주세요.")
         return redirect('login_view')
 
     return render(request, 'login.html')
@@ -34,10 +37,12 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            messages.success(request, "로그인 성공!")
             return redirect('home')
         else:
-            return HttpResponse("잘못된 로그인입니다.")
-    
+            messages.error(request, "로그인 실패했습니다.")
+            return redirect('login_view')
+        
     return render(request, 'login.html')
 
 def home(request):
@@ -45,7 +50,8 @@ def home(request):
 
 def logout_view(request):
     auth_logout(request)
-    return redirect('login_view')
+    messages.success(request, "로그아웃 되었습니다.")
+    return redirect('home')
 
 @login_required
 def profile_view(request):
