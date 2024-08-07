@@ -10,9 +10,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="user-icon-btn" onclick="location.href='{% url 'login' %}'">
+            {% if user.is_authenticated %}
+                <!-- 로그인된 상태일 때 프로필 아이콘과 패널 표시-->
+                <div class="profile-icon-btn">
+                    <img src="{% static "img/profile-icon.png" %}" alt="프로필 아이콘" onclick="toggleProfilePanel()">
+                    <div class="profile-panel" id="profile-panel">
+                        <a href="{% url 'profile' %}">내 정보</a>
+                        <a href="{% url 'logout' %}">로그아웃</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- 로그인되지 않은 상태일 때 로그인 버튼을 표시 -->
+                <button class="user-icon-btn" onclick="location.href='{% url 'login_view' %}'">
                 <img src="{% static "img/profile-icon.png" %}" alt="프로필 아이콘">
-            </button>
+                </button>
+            {% endif %}
         </div>
         <h1 class="title">사용자 유형 선택</h1>
         <div class="user-types">
@@ -47,5 +59,6 @@
             <button class="search-btn">검색</button>
         </div>
     </div>
+    <script src="{% static "js/home.js" %}"></script>
 </body>
 </html>
