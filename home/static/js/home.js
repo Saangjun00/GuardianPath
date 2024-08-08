@@ -15,3 +15,21 @@ document.addEventListener('click', function(event) {
         panel.style.display = 'none';
     }
 });
+
+function toggleProfilePanel() {
+    var profilePanel = document.getElementById('profile-panel');
+    if (profilePanel.style.display === 'block') {
+        profilePanel.style.display = 'none';
+    } else {
+        profilePanel.style.display = 'block';
+    }
+}
+
+// 클릭 시 메뉴 바깥을 클릭하면 메뉴가 닫히도록
+document.addEventListener('click', function(event) {
+    var profilePanel = document.getElementById('profile-panel');
+    var profileIconBtn = document.querySelector('.profile-icon-btn');
+    if (!profilePanel.contains(event.target) && !profileIconBtn.contains(event.target)) {
+        profilePanel.style.display = 'none';
+    }
+});

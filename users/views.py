@@ -24,7 +24,7 @@ def register_view(request):
         
         # 사용자 생성
         User.objects.create_user(email=email, name=name, password=password1)
-        messages.success(request, "회원가입이 완료되었습니다. 로그인해주세요.")
+        messages.success(request, "회원가입이 완료되었습니다. 로그인해주세요!")
         return redirect('login_view')
 
     return render(request, 'login.html')
@@ -37,7 +37,6 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, "로그인 성공!")
             return redirect('home')
         else:
             messages.error(request, "로그인 실패했습니다.")
@@ -50,7 +49,6 @@ def home(request):
 
 def logout_view(request):
     auth_logout(request)
-    messages.success(request, "로그아웃 되었습니다.")
     return redirect('home')
 
 @login_required
