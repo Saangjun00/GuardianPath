@@ -55,3 +55,6 @@ def logout_view(request):
 def profile_view(request):
     # 사용자 정보를 템플릿에 전달할 수 있습니다.
     return render(request, 'profile.html')
+
+def kakao_login(request):
+    REST_API_KEY = getattr

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from . import local_settings
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    #allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
 
     # app
     'home',
@@ -52,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'GuardianPath.urls'
@@ -132,13 +141,28 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+# allauth
 
-AUTHENTICATION_BACKENDS = (
+SITE_ID = 1
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'home'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
+
+
+AUTHENTICATION_BACKENDS = [
     'users.backends.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend'
-)
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 AUTH_USER_MODEL = 'users.MyUser'
 
@@ -153,4 +177,25 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'success',
     messages.WARNING: 'warning',
     messages.ERROR: 'error',
+}
+
+load_dotenv()
+
+SOCIALACCOUNT_PROVIDERS = {
+    'kakao': {
+        'APP': {
+            'client_id': os.getenv('KAKAO_CLIENT_ID'),
+            'secret': os.getenv('KAKAO_SECRET'),
+            'key': ''
+        },
+        'AUTH_PARAMS': {
+            'scope': 'account_email'
+        },
+        'SCOPE': [
+            'account_email'
+        ],
+        'PROFILE_PARAMS': {
+            'fields': 'id,email'
+        }
+    }
 }

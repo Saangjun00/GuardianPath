@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,7 +16,7 @@
                 <div class="profile-icon-btn">
                     <img src="{% static 'img/profile-icon.png' %}" alt="프로필 아이콘" onclick="toggleProfilePanel()">
                     <div class="profile-panel" id="profile-panel">
-                        <p>안녕하세요, {{ username }}님!</p>
+                        <p>안녕하세요, {{ name }}님!</p>
                         <a href="{% url 'profile' %}">내 정보</a>
                         <a href="{% url 'logout' %}">로그아웃</a>
                     </div>
@@ -27,6 +28,9 @@
                     <div class="profile-panel" id="profile-panel">
                         <a href="{% url 'login_view' %}">로그인</a>
                     </div>
+                    <button type="button" onclick="location.href = '{% provider_login_url 'kakao' %}'">
+                        <img class = "kakao" src="https://k.kakaocdn.net/14/dn/btroDszwNrM/I6efHub1SN5KCJqLm1Ovx1/o.jpg" alt="" >
+                    </button>
                  </div>
             {% endif %}
         </div>
