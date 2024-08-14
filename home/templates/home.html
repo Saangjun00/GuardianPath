@@ -16,7 +16,7 @@
                 <div class="profile-icon-btn">
                     <img src="{% static 'img/profile-icon.png' %}" alt="프로필 아이콘" onclick="toggleProfilePanel()">
                     <div class="profile-panel" id="profile-panel">
-                        <p>안녕하세요, {{ name }}님!</p>
+                        <p>안녕하세요, {{ user.username }}님!</p>
                         <a href="{% url 'profile' %}">내 정보</a>
                         <a href="{% url 'logout' %}">로그아웃</a>
                     </div>
