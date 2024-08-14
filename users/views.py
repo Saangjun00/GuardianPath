@@ -42,6 +42,7 @@ def home(request):
 
 def logout_view(request):
     logout(request)
+    messages.error(request, "로그아웃 되었습니다.")
     return redirect('home')
 
 @login_required
