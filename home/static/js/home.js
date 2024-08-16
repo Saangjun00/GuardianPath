@@ -45,3 +45,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000); // 3초 후에 애니메이션 시작
     });
 });
+
+function openAddressSearch(fieldId) {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            var address = data.roadAddress || data.jibunAddress;
+            document.getElementById(fieldId).value = address;
+        }
+    }).open();
+}

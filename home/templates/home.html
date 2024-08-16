@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guardian Path</title>
     <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
     <header>
@@ -46,7 +47,9 @@
                  </div>
             {% endif %}
         </div>
-        <h1 class="title">사용자 유형 선택</h1>
+        <div class="title">
+            <h1>Guardian Path</h1>
+        </div>
         <div class="user-types">
             <label class="user-type-label">
                 <input type="radio" name="user-type" class="user-type-radio" value="general">
@@ -67,6 +70,7 @@
                 <div class ="input-with-icon">
                     <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
                     <input type="text" id="departure" placeholder="출발지 입력">
+                    <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
                 </div>
             </div>
             <div class="input-group">
@@ -74,6 +78,7 @@
                 <div class ="input-with-icon">
                     <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
                     <input type="text" id="destination" placeholder="도착지 입력">
+                    <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
                 </div>
             </div>
             <button class="search-btn">검색</button>
