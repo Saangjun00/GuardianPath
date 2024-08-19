@@ -32,6 +32,7 @@
                         <p>안녕하세요, {{ user.username }}님!</p>
                         <a href="{% url 'profile' %}">내 정보</a>
                         <a href="{% url 'logout' %}">로그아웃</a>
+                        <a href="{% url 'password_change' %}">비밀번호 변경</a>
                     </div>
                 </div>
             {% else %}
