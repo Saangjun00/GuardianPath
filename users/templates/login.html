@@ -49,7 +49,7 @@
           <input class="form__input" id="username" name="username" type="text" placeholder="Username" required>
           <label for="password">Password</label>
           <input class="form__input" id="password" name="password" type="password" placeholder="Password" required>
-          <a class="form__link">비밀번호를 잊어버리셨나요?</a>
+          <a class="form__link" href="{% url 'password_reset' %}">비밀번호를 잊어버리셨나요?</a>
           <button class="form__button button submit" type="submit">로그인</button>
         </form>
       </div>

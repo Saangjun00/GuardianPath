@@ -152,6 +152,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # allauth
 
+SITE_NAME = 'Guardian Path'
 SITE_ID = 1
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -185,15 +186,23 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         },
         'AUTH_PARAMS': {
-            'scope': 'account_email'
+            'scope': ''
         },
         'SCOPE': [
-            'account_email'
+            ''
         ],
         'PROFILE_PARAMS': {
-            'fields': 'id,email'
+            'fields': 'id'
         }
     }
 }
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Email 전송
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+PASSWORD_RESET_EMAIL_TEMPLATE_NAME = 'registration/password_reset_email.html'
