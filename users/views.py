@@ -30,6 +30,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+            messages.success(request, f"{ username }님 환영합니다!")
             return redirect('home')
         else:
             messages.error(request, "로그인 실패했습니다.")
