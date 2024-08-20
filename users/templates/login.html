@@ -15,7 +15,7 @@
       <div class="messages">
         {% for message in messages %}
           <div class="alert alert-{{ message.tags }}">
-            {{ message }}
+            {{ message|safe }}
           </div>
         {% endfor %}
       </div>
@@ -28,9 +28,9 @@
           {% csrf_token %}
           <h2 class="form_title title">Create Account</h2>
           <label for="name">Username</label>
-          <input class="form__input" id="username" name="username" type="text" placeholder="Username" required>
+          <input class="form__input" id="username" name="username" type="text" placeholder="Username" value="{{ username|default_if_none:'' }}" required>
           <label for="email">Email</label>
-          <input class="form__input" id="email" name="email" type="email" placeholder="Email" required>
+          <input class="form__input" id="email" name="email" type="email" placeholder="Email" value="{{ email|default_if_none:'' }}" required>
           <label for="password1">Password</label>
           <input class="form__input" id="password1 "name="password1" type="password" placeholder="Password" required>
           <label for="password2">Check Password</label>
@@ -50,7 +50,7 @@
               <img src="{% static 'img/web_light_sq_SI@1x.png' %}" alt="구글로그인"></a>
           </div>
           <label for="email">Username</label>
-          <input class="form__input" id="username" name="username" type="text" placeholder="Username" required>
+          <input class="form__input" id="username" name="username" type="text" placeholder="Username"  required>
           <label for="password">Password</label>
           <input class="form__input" id="password" name="password" type="password" placeholder="Password" required>
           <a class="form__link" href="{% url 'password_reset' %}">비밀번호를 잊어버리셨나요?</a>
