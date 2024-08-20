@@ -32,18 +32,6 @@
                         <p>안녕하세요,<br>{{ user.username }}님!</p>
                         <a href="{% url 'profile' %}">내 정보</a>
                         <a href="{% url 'logout' %}">로그아웃</a>
-
-                        {% if user.socialaccount_set.all %}
-                            <!-- 소셜 계정이 연동된 경우 비밀번호 변경 링크를 표시하지 않습니다. -->
-                        {% else %}
-                            <a href="{% url 'password_change' %}">비밀번호 변경</a>
-                        {% endif %}
-
-                        <!-- 회원 탈퇴 버튼 추가 -->
-                        <form action="{% url 'delete_account' %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">회원 탈퇴</button>
-                        </form>
                     </div>
                 </div>
             {% else %}
