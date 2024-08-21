@@ -7,7 +7,14 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="{% static "css/login_style.css" %}">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
-    <title>내 정도</title>
+    <title>내 정보</title>
+    <script>
+      function confirmDeletion(event) {
+        if (!confirm("정말로 탈퇴하시겠습니까?")) {
+          event.preventDefault();
+        }
+      }
+    </script>
   </head>
   <body>
     <header>
@@ -23,22 +30,27 @@
       {% endif %}
     </header>
     <div class="main">
+      <div class="profile-container">
         <h1>내 정보</h1>
         <div class="profile-info">
             <p><strong>사용자 이름: </strong> {{user.username }}</p>
             <p><strong>이메일: </strong> {{ user.email }}</p>
+            <div class="password-container">
+                <p><strong>비밀번호: </strong> ********</p>
+                {% if not user.socialaccount_set.all %}
+                <!-- 소셜 계정이 연동되지 않은 경우 비밀번호 변경 링크를 표시 -->
+                <a href="{% url 'password_change' %}" class="btn btn-primary">비밀번호 변경</a>
+                {% endif %}
+          </div>
+            <p><strong>가입일자: </strong> {{ user.date_joined|date:"Y-m-d" }}</p>
         </div>
         <div class="profile-actions">
-            {% if not user.socialaccount_set.all %}
-                <!-- 소셜 계정이 연동되지 않은 경우 비밀번호 변경 링크를 표시 -->
-                <a href="{% url 'password_change' %}" class="btn btn-primary" 비밀번호 변경></a>
-            {% endif %}
-          
-            <form action="{% url 'delete_account' %}" method="post" style="display: inline;">
+            <form action="{% url 'delete_account' %}" method="post" style="display: inline;" onsubmit="confirmDeletion(event)">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">회원 탈퇴</button>
             </form>
-        </div>   
+        </div>
+      </div>
     </div>
   </body>
 </html>

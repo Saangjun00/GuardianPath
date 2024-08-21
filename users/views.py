@@ -101,7 +101,6 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    # 사용자 정보를 템플릿에 전달할 수 있습니다.
     return render(request, 'profile.html')
 
 class UserDeleteView(LoginRequiredMixin, View):

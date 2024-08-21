@@ -346,24 +346,54 @@
 
   .profile-container {
     background: #fff;
-    padding: 20px;
+    padding: 20px 40px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 500px;
+    max-width: 950px;
+    height: 100%;
+    font-style: normal;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    color: #000;
+    box-sizing: border-box;
   }
   
   .profile-container h1 {
-    margin-bottom: 20px;
+    margin-top: 20px;
+    margin-bottom: 40px;
   }
   
   .profile-info p {
-    font-size: 16px;
-    margin: 10px 0;
+    font-size: 18px;
+    margin: 20px 0;
+    color: #007bff;
+  }
+
+  .profile-container strong {
+    color: #000;
   }
   
   .profile-actions {
     margin-top: 20px;
+  }
+
+  .password-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* 비밀번호와 버튼 사이의 간격 */
+    margin: 10px 0; /* 위아래 여백 */
+  }
+
+  .password-container .btn-primary {
+    background-color: #000;
+    color: #fff;
+    margin-left: 15px;
+  }
+
+  .password-container .btn-primary:hover {
+    background-color: #3e3d3d;
   }
   
   .btn {
@@ -372,7 +402,7 @@
     font-size: 16px;
     text-align: center;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 20px;
     border: none;
     cursor: pointer;
     margin: 5px;
