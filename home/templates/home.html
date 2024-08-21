@@ -61,25 +61,36 @@
                 <span class="user-type-btn"><img src="{% static "img/escalator-icon.png" %}" alt="에스컬레이터 아이콘"> 에스컬레이터 사용자</span>
             </label>
         </div>
-        <div class="search-box">
-            <div class="input-group">
-                <label for="departure">출발지</label>
-                <div class ="input-with-icon">
-                    <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
-                    <input type="text" id="departure" placeholder="출발지 입력">
-                    <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
+        <div class="main-content">
+            <div class="search-box">
+                <div class="input-group">
+                    <label for="departure">출발지</label>
+                    <div class ="input-with-icon">
+                        <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
+                        <input type="text" id="departure" placeholder="출발지 입력">
+                        <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="destination">도착지</label>
+                    <div class ="input-with-icon">
+                        <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
+                        <input type="text" id="destination" placeholder="도착지 입력">
+                        <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
+                    </div>
+                </div>
+                <button class="search-btn">검색</button>
+            </div>
+            <div class="search-history">
+                <h2>검색 기록</h2>
+                <div class="history-list">
+                    <ul class="history-list"></ul>
+                    <!-- 검색 기록이 여기에 동적으로 추가됩니다 -->
                 </div>
             </div>
-            <div class="input-group">
-                <label for="destination">도착지</label>
-                <div class ="input-with-icon">
-                    <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
-                    <input type="text" id="destination" placeholder="도착지 입력">
-                    <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
-                </div>
-            </div>
-            <button class="search-btn">검색</button>
+    
         </div>
+        
     </div>
     <script src="{% static "js/home.js" %}"></script>
 </body>

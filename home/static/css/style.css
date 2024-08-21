@@ -164,7 +164,7 @@ header {
     color: white;
 }
 
-.search-box {
+/* .search-box {
     background-color: white;
     border: 1px solid #dcdcdc;
     border-radius: 10px;
@@ -172,7 +172,7 @@ header {
     padding: 20px;
     margin-top: 20px;
     width: 500px;
-}
+} */
 
 .input-group {
     margin-bottom: 20px;
@@ -270,4 +270,57 @@ header {
 
 .profile-panel a:hover {
     background-color: #f0f0f0;
+}
+
+.main-content {
+    display: flex; /* Flexbox로 좌우 배치 */
+    justify-content: space-between;
+    align-items: flex-start; /* 상단 정렬 */
+    margin-top: 80px; /* 헤더 아래로 약간의 간격 */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.search-box {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 20px;
+    margin-right: 20px; /* 오른쪽 여백 추가 */
+    max-width: 45%; /* 최대 너비를 45%로 설정 */
+    box-sizing: border-box;
+}
+
+.search-history {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 45%; /* 최대 너비를 45%로 설정 */
+    max-height: 400px; /* 최대 높이 설정 */
+    overflow-y: auto; /* 스크롤을 위해 overflow 설정 */
+    box-sizing: border-box;
+}
+
+.search-history h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+}
+
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.history-list li:last-child {
+    border-bottom: none;
 }
