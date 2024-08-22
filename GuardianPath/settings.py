@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import warnings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -224,3 +225,9 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 PASSWORD_RESET_EMAIL_TEMPLATE_NAME = 'registration/password_reset_email.html'
+
+warnings.filterwarnings(
+    'ignore',
+    category=UserWarning,
+    message='.*allauth.exceptions is deprecated.*'
+)
