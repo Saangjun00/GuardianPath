@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # app
     'home',
     'users',
+    'map',
 ]
 
 MIDDLEWARE = [
