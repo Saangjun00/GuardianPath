@@ -324,3 +324,20 @@ header {
 .history-list li:last-child {
     border-bottom: none;
 }
+
+.favorite-btn {
+    background-color: #ebd509;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.favorite-btn:hover {
+    background-color: #f0b000;
+}

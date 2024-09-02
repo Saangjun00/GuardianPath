@@ -2,96 +2,105 @@
 {% load socialaccount %}
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guardian Path</title>
-    <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <!-- 메시지 출력 -->
-        {% if messages %}
+      <!-- 메시지 출력 -->
+      {% if messages %}
         <div class="messages">
           {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-              {{ message|safe }}
-            </div>
+            <div class="alert alert-{{ message.tags }}">{{ message|safe }}</div>
           {% endfor %}
         </div>
-        {% endif %}
+      {% endif %}
     </header>
     <div class="container">
-        <div class="header">
-            {% if user.is_authenticated %}
-                <!-- 로그인된 상태일 때 프로필 아이콘과 패널 표시-->
-                <div class="profile-icon-btn">
-                    <img src="{% static 'img/profile-icon.png' %}" alt="프로필 아이콘" onclick="toggleProfilePanel()">
-                    <div class="profile-panel" id="profile-panel">
-                        <p>안녕하세요,<br>{{ user.username }}님!</p>
-                        <a href="{% url 'profile' %}">내 정보</a>
-                        <a href="{% url 'logout' %}">로그아웃</a>
-                    </div>
-                </div>
-            {% else %}
-                <!-- 로그인되지 않은 상태일 때 로그인 버튼을 표시 -->
-                 <div class="profile-icon-btn">
-                    <img src="{% static "img/profile-icon.png" %}" alt="프로필 아이콘" onclick="toggleProfilePanel()">
-                    <div class="profile-panel" id="profile-panel">
-                        <a href="{% url 'login_view' %}">로그인</a>
-                    </div>
-                 </div>
-            {% endif %}
-        </div>
-        <div class="title">
-            <h1>Guardian Path</h1>
-        </div>
+      <div class="header">
+        {% if user.is_authenticated %}
+          <!-- 로그인된 상태일 때 프로필 아이콘과 패널 표시 -->
+          <div class="profile-icon-btn">
+            <img src="{% static 'img/profile-icon.png' %}" alt="프로필 아이콘" onclick="toggleProfilePanel()" />
+            <div class="profile-panel" id="profile-panel">
+              <p>
+                안녕하세요,<br />{{ user.username }}님!
+              </p>
+              <a href="{% url 'profile' %}">내 정보</a>
+              <a href="{% url 'logout' %}">로그아웃</a>
+            </div>
+          </div>
+        {% else %}
+          <!-- 로그인되지 않은 상태일 때 로그인 버튼을 표시 -->
+          <div class="profile-icon-btn">
+            <img src="{% static 'img/profile-icon.png' %}" alt="프로필 아이콘" onclick="toggleProfilePanel()" />
+            <div class="profile-panel" id="profile-panel">
+              <a href="{% url 'login_view' %}">로그인</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="title">
+        <h1>Guardian Path</h1>
+      </div>
+      <form method="post" action="{% url 'save_route' %}">
+        {% csrf_token %}
+
         <div class="user-types">
-            <label class="user-type-label">
-                <input type="radio" name="user-type" class="user-type-radio" value="general">
-                <span class="user-type-btn"><img src="{% static "img/user-icon.png" %}" alt="일반 사용자 아이콘"> 일반 사용자</span>
-            </label>
-            <label class="user-type-label">
-                <input type="radio" name="user-type" class="user-type-radio" value="elevator">
-                <span class="user-type-btn"><img src="{% static "img/elevator-icon.png" %}" alt="엘리베이터 아이콘"> 엘리베이터 사용자</span>
-            </label>
-            <label class="user-type-label">
-                <input type="radio" name="user-type" class="user-type-radio" value="escalator">
-                <span class="user-type-btn"><img src="{% static "img/escalator-icon.png" %}" alt="에스컬레이터 아이콘"> 에스컬레이터 사용자</span>
-            </label>
+          <label class="user-type-label">
+            <input type="radio" name="user_type" class="user-type-radio" value="general" />
+            <span class="user-type-btn"><img src="{% static 'img/user-icon.png' %}" alt="일반 사용자 아이콘" /> 일반 사용자</span>
+          </label>
+          <label class="user-type-label">
+            <input type="radio" name="user_type" class="user-type-radio" value="elevator" />
+            <span class="user-type-btn"><img src="{% static 'img/elevator-icon.png' %}" alt="엘리베이터 아이콘" /> 엘리베이터 사용자</span>
+          </label>
+          <label class="user-type-label">
+            <input type="radio" name="user_type" class="user-type-radio" value="escalator" />
+            <span class="user-type-btn"><img src="{% static 'img/escalator-icon.png' %}" alt="에스컬레이터 아이콘" /> 에스컬레이터 사용자</span>
+          </label>
         </div>
+
         <div class="main-content">
-            <div class="search-box">
-                <div class="input-group">
-                    <label for="departure">출발지</label>
-                    <div class ="input-with-icon">
-                        <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
-                        <input type="text" id="departure" placeholder="출발지 입력">
-                        <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="destination">도착지</label>
-                    <div class ="input-with-icon">
-                        <img src="{% static "img/gps-icon.png" %}" alt="GPS 아이콘">
-                        <input type="text" id="destination" placeholder="도착지 입력">
-                        <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
-                    </div>
-                </div>
-                <button class="search-btn">검색</button>
+          <div class="search-box">
+            <div class="input-group">
+              <label for="departure">출발지</label>
+              <div class="input-with-icon">
+                <img src="{% static 'img/gps-icon.png' %}" alt="GPS 아이콘" />
+                <input type="text" id="departure" placeholder="출발지 입력" name="departure"/>
+                <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
+              </div>
             </div>
-            <div class="search-history">
-                <h2>검색 기록</h2>
-                <div class="history-list">
-                    <ul class="history-list"></ul>
-                    <!-- 검색 기록이 여기에 동적으로 추가됩니다 -->
-                </div>
+            <div class="input-group">
+              <label for="destination">도착지</label>
+              <div class="input-with-icon">
+                <img src="{% static 'img/gps-icon.png' %}" alt="GPS 아이콘" />
+                <input type="text" id="destination" placeholder="도착지 입력" name="destination" />
+                <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
+              </div>
             </div>
-    
+            <button class="favorite-btn" type="submit" name="save_favorite">즐겨찾기 경로 저장</button>
+            <button class="search-btn" type="submit" name="search_route">검색</button>
+          </div>
+          <div class="search-history">
+            <h2>검색 기록</h2>
+            <div class="history-list">
+              <ul class="history-list">
+                {% for route in search_history %}
+                  <li>{{ route.departure }} -> {{ route.destination }} ({{ route.created_at }})</li>
+                {% empty %}
+                  <li>검색 기록이 없습니다.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
         </div>
-        
+      </form>
     </div>
-    <script src="{% static "js/home.js" %}"></script>
-</body>
+    <script src="{% static 'js/home.js' %}"></script>
+  </body>
 </html>
