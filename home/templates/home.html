@@ -86,30 +86,37 @@
             <button class="favorite-btn" type="submit" name="save_favorite">즐겨찾기 경로 저장</button>
             <button class="search-btn" type="submit" name="search_route">검색</button>
           </div>
-          <div class="search-history">
-            <h2>검색 기록</h2>
-            <div class="history-list">
-              <ul class="history-list">
-                {% for route in search_history %}
-                  <li>{{ route.departure }} -> {{ route.destination }} ({{ route.created_at }})</li>
-                {% empty %}
-                  <li>검색 기록이 없습니다.</li>
-                {% endfor %}
-              </ul>
+
+          <!-- 로그인된 상태에서만 검색 기록과 즐겨찾기 목록을 표시 -->
+          {% if user.is_authenticated %}
+          <div class="history-and-favorites">
+            <div class="search-history">
+              <h2>검색 기록</h2>
+              <div class="history-list">
+                <ul class="history-list">
+                  {% for route in search_history %}
+                    <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}')">{{ route.departure }} -> {{ route.destination }}<br>({{ route.created_at }})</li>
+                  {% empty %}
+                    <li>검색 기록이 없습니다.</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+
+            <div class="favorite-routes">
+              <h2>즐겨찾기 경로</h2>
+              <div class="favorite-list">
+                <ul class="favorite-list">
+                  {% for route in favorite_routes %}
+                    <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}')">{{ route.departure }} -> {{ route.destination }}</li>
+                  {% empty %}
+                    <li>즐겨찾기 경로가 없습니다.</li>
+                  {% endfor %}
+                </ul>
+              </div>
             </div>
           </div>
-          <div class="favorite-routes">
-            <h2>즐겨찾기 경로</h2>
-            <div class="favorite-list">
-              <ul>
-                {% for route in favorite_routes %}
-                  <li>{{ route.departure }} -> {{ route.destination }}</li>
-                {% empty %}
-                  <li>즐겨찾기 경로가 없습니다.</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
+          {% endif %}
         </div>
       </form>
     </div>

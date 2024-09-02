@@ -54,3 +54,8 @@ function openAddressSearch(fieldId) {
         }
     }).open();
 }
+
+function selectRoute(departure, destination) {
+    document.getElementById('departure').value = departure;
+    document.getElementById('destination').value = destination;
+  }
