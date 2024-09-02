@@ -98,6 +98,18 @@
               </ul>
             </div>
           </div>
+          <div class="favorite-routes">
+            <h2>즐겨찾기 경로</h2>
+            <div class="favorite-list">
+              <ul>
+                {% for route in favorite_routes %}
+                  <li>{{ route.departure }} -> {{ route.destination }}</li>
+                {% empty %}
+                  <li>즐겨찾기 경로가 없습니다.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
         </div>
       </form>
     </div>

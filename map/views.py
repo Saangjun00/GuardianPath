@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import UserRoute
 from users.models import User
+from django.urls import reverse
 
 def save_route(request):
     if request.method == 'POST':
@@ -42,14 +43,9 @@ def save_route(request):
                 request.session['departure'] = departure
                 request.session['destination'] = destination
 
-            return redirect('search_results')  # 검색 결과 페이지로 리다이렉트
+            return redirect(reverse('search_results'))
 
     return render(request, 'home.html')
-
-@login_required
-def favorites(request):
-    favorite_routes = UserRoute.objects.filter(user=request.user, is_favorite=True)
-    return render(request, 'favorites.html', {'routes': favorite_routes})
 
 def search_results(request):
     # 길찾기 검색 로직에 따른 결과를 가져옴
@@ -60,7 +56,12 @@ def home_view(request):
     # 로그인된 사용자의 검색 기록을 불러옴
     if request.user.is_authenticated:
         search_history = UserRoute.objects.filter(user=request.user).order_by('-created_at')[:10]  # 최근 10개의 검색 기록
+        favorite_routes = UserRoute.objects.filter(user=request.user, is_favorite=True)
     else:
         search_history = []
+        favorite_routes = []
 
-    return render(request, 'home.html', {'search_history': search_history})
+    return render(request, 'home.html', {
+        'search_history': search_history,
+        'favorite_routes': favorite_routes,
+    })
