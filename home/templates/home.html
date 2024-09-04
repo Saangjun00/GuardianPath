@@ -53,7 +53,7 @@
         <div class="user-types">
           <label class="user-type-label">
             <input type="radio" name="user_type" class="user-type-radio" value="general" />
-            <span class="user-type-btn"><img src="{% static 'img/user-icon.png' %}" alt="일반 사용자 아이콘" /> 일반 사용자</span>
+            <span class="user-type-btn"><img src="{% static 'img/general-icon.png' %}" alt="일반 사용자 아이콘" /> 일반 사용자</span>
           </label>
           <label class="user-type-label">
             <input type="radio" name="user_type" class="user-type-radio" value="elevator" />
@@ -71,7 +71,7 @@
               <label for="departure">출발지</label>
               <div class="input-with-icon">
                 <img src="{% static 'img/gps-icon.png' %}" alt="GPS 아이콘" />
-                <input type="text" id="departure" placeholder="출발지 입력" name="departure"/>
+                <input type="text" id="departure" placeholder="출발지 입력" name="departure" value="{{ departure }}" />
                 <button type="button" onclick="openAddressSearch('departure')">주소 검색</button>
               </div>
             </div>
@@ -79,46 +79,62 @@
               <label for="destination">도착지</label>
               <div class="input-with-icon">
                 <img src="{% static 'img/gps-icon.png' %}" alt="GPS 아이콘" />
-                <input type="text" id="destination" placeholder="도착지 입력" name="destination" />
+                <input type="text" id="destination" placeholder="도착지 입력" name="destination" value="{{ destination }}" />
                 <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
               </div>
             </div>
             <button class="favorite-btn" type="submit" name="save_favorite">즐겨찾기 경로 저장</button>
             <button class="search-btn" type="submit" name="search_route">검색</button>
           </div>
-
-          <!-- 로그인된 상태에서만 검색 기록과 즐겨찾기 목록을 표시 -->
-          {% if user.is_authenticated %}
-          <div class="history-and-favorites">
-            <div class="search-history">
-              <h2>검색 기록</h2>
-              <div class="history-list">
-                <ul class="history-list">
-                  {% for route in search_history %}
-                    <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}')">{{ route.departure }} -> {{ route.destination }}<br>({{ route.created_at }})</li>
-                  {% empty %}
-                    <li>검색 기록이 없습니다.</li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-
-            <div class="favorite-routes">
-              <h2>즐겨찾기 경로</h2>
-              <div class="favorite-list">
-                <ul class="favorite-list">
-                  {% for route in favorite_routes %}
-                    <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}')">{{ route.departure }} -> {{ route.destination }}</li>
-                  {% empty %}
-                    <li>즐겨찾기 경로가 없습니다.</li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </div>
-          {% endif %}
         </div>
       </form>
+
+      <!-- 로그인된 상태에서만 검색 기록과 즐겨찾기 목록을 표시 -->
+      {% if user.is_authenticated %}
+        <div class="history-and-favorites">
+          <div class="search-history">
+            <div class="search-history-header">
+              <h2>검색 기록</h2>
+              <form method="post" action="{% url 'clear_search_history' %}">
+                {% csrf_token %}
+                <button class="clear-history-btn" type="submit" onclick="clearSearchHistory(event)">모두 삭제</button>
+              </form>
+            </div>
+            <div class="history-list">
+              <ul class="history-list">
+                {% for route in search_history %}
+                  <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}', '{{ route.user_type }}')">
+                    <img src="{% static 'img/'|add:route.user_type|add:'-icon.png' %}" alt="아이콘" class="user-type-icon" />
+                    {{ route.departure }} -> {{ route.destination }}<br/>({{ route.created_at }})
+                  </li>
+                {% empty %}
+                  <li>검색 기록이 없습니다.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+          <div class="favorite-routes">
+            <h2>즐겨찾기 경로</h2>
+            <div class="favorite-list">
+              <ul class="favorite-list">
+                {% for route in favorite_routes %}
+                  <li>
+                    <img src="{% static 'img/'|add:route.user_type|add:'-icon.png' %}" alt="아이콘" class="user-type-icon" />
+                    <form method="POST" action="{% url 'delete_favorite_route' route.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <span onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}', '{{ route.user_type }}')">{{ route.departure }} -> {{ route.destination }}</span>
+                      <button type="submit" class="delete-btn" onclick="confirmDelete(event)">삭제</button>
+                    </form>
+                  </li>
+                {% empty %}
+                  <li>즐겨찾기 경로가 없습니다.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
     <script src="{% static 'js/home.js' %}"></script>
   </body>

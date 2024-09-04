@@ -95,6 +95,7 @@
     align-items: center;
     margin-bottom: 20px;
     gap: 10px;
+    border-style: none;
   }
 
   .form__icons a {

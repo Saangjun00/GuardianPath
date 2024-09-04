@@ -55,7 +55,30 @@ function openAddressSearch(fieldId) {
     }).open();
 }
 
-function selectRoute(departure, destination) {
+function selectRoute(departure, destination, userType) {
     document.getElementById('departure').value = departure;
     document.getElementById('destination').value = destination;
-  }
+
+    // 사용자 타입에 맞는 라디오 버튼 선택
+    const radios = document.querySelectorAll('input[name="user_type"]');
+    radios.forEach(radio => {
+        if (radio.value === userType) {
+            radio.checked = true;
+        }
+    });
+}
+
+function clearSearchHistory(event) {
+    event.preventDefault();
+    if (confirm('검색 기록을 모두 삭제하시겠습니까?')) {
+        event.target.closest('form').submit();
+    }
+}
+
+function confirmDelete(event) {
+    event.preventDefault();
+    if (confirm("정말로 이 즐겨찾기 경로를 삭제하시겠습니까?")) {
+      event.target.closest('form').submit();
+    }
+}
+
