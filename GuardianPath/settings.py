@@ -232,3 +232,6 @@ warnings.filterwarnings(
     category=UserWarning,
     message='.*allauth.exceptions is deprecated.*'
 )
+
+# Tmap API 키
+TMAP_API_KEY = os.getenv('TMAP_API_KEY')

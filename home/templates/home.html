@@ -102,10 +102,10 @@
             </div>
             <div class="history-list">
               <ul class="history-list">
-                {% for route in search_history %}
-                  <li onclick="selectRoute('{{ route.departure }}', '{{ route.destination }}', '{{ route.user_type }}')">
-                    <img src="{% static 'img/'|add:route.user_type|add:'-icon.png' %}" alt="아이콘" class="user-type-icon" />
-                    {{ route.departure }} -> {{ route.destination }}<br/>({{ route.created_at }})
+                {% for history in search_history %}
+                  <li onclick="selectRoute('{{ history.departure }}', '{{ history.destination }}', '{{ history.user_type }}')">
+                    <img src="{% static 'img/'|add:history.user_type|add:'-icon.png' %}" alt="아이콘" class="user-type-icon" />
+                    {{ history.departure }} -> {{ history.destination }}<br/>({{ history.created_at }})
                   </li>
                 {% empty %}
                   <li>검색 기록이 없습니다.</li>

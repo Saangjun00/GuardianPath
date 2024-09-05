@@ -59,7 +59,6 @@ function selectRoute(departure, destination, userType) {
     document.getElementById('departure').value = departure;
     document.getElementById('destination').value = destination;
 
-    // 사용자 타입에 맞는 라디오 버튼 선택
     const radios = document.querySelectorAll('input[name="user_type"]');
     radios.forEach(radio => {
         if (radio.value === userType) {

@@ -11,3 +11,13 @@ class UserRoute(models.Model):
 
     def __str__(self):
         return f"{self.user.username if self.user else 'Anonymous'}: {self.departure} -> {self.destination}"
+    
+class SearchHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_type = models.CharField(max_length=20)
+    departure = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.departure} -> {self.destination}"
