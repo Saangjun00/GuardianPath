@@ -4,6 +4,8 @@ from .models import UserRoute, SearchHistory
 from users.models import User
 from django.urls import reverse
 from django.contrib import messages
+import requests
+from django.http import JsonResponse
 
 def save_route(request):
     if request.method == 'POST':
@@ -43,7 +45,7 @@ def save_route(request):
 
             return redirect(reverse('search_results') + f"?departure={departure}&destination={destination}&user_type={user_type}")
 
-    return render(request, 'home.html')
+    return redirect('home')
 
 def search_results(request):
     # Tmap API 키
@@ -53,6 +55,12 @@ def search_results(request):
     departure = request.GET.get('departure')
     destination = request.GET.get('destination')
     user_type = request.GET.get('user_type')
+
+    # GET 요청으로 전달된 경도 위도 가져오기
+    departure_lat = request.GET.get('departure_lat')
+    departure_lon = request.GET.get('departure_lon')
+    destination_lat = request.GET.get('destination_lat')
+    destination_lon = request.GET.get('destination_lon')
 
     # 길찾기 검색 결과 처리 (현재 미구현)
     results = 1

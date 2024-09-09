@@ -8,6 +8,7 @@
     <title>Guardian Path</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_api_key }}"></script>
   </head>
   <body>
     <header>
@@ -83,8 +84,15 @@
                 <button type="button" onclick="openAddressSearch('destination')">주소 검색</button>
               </div>
             </div>
+
+            <!-- 숨김 필드 추가 -->
+            <input type="hidden" id="departure_lat" name="departure_lat" value="" />
+            <input type="hidden" id="departure_lon" name="departure_lon" value="" />
+            <input type="hidden" id="destination_lat" name="destination_lat" value="" />
+            <input type="hidden" id="destination_lon" name="destination_lon" value="" />
+
             <button class="favorite-btn" type="submit" name="save_favorite">즐겨찾기 경로 저장</button>
-            <button class="search-btn" type="submit" name="search_route">검색</button>
+            <button class="search-btn" type="submit" name="search_route" onclick="startGeocoding()">검색</button>
           </div>
         </div>
       </form>
@@ -105,11 +113,11 @@
                 {% for history in search_history %}
                   <li onclick="selectRoute('{{ history.departure }}', '{{ history.destination }}', '{{ history.user_type }}')">
                     <img src="{% static 'img/'|add:history.user_type|add:'-icon.png' %}" alt="아이콘" class="user-type-icon" />
-                    {{ history.departure }} -> {{ history.destination }}<br/>({{ history.created_at }})
+                    {{ history.departure }} -> {{ history.destination }}<br />({{ history.created_at }})
                   </li>
                 {% empty %}
                   <li>검색 기록이 없습니다.</li>
-                {% endfor %}
+                {% endfor %}a
               </ul>
             </div>
           </div>
@@ -137,5 +145,72 @@
       {% endif %}
     </div>
     <script src="{% static 'js/home.js' %}"></script>
+    <script>
+      function startGeocoding() {
+        var departureAddress = document.getElementById('departure').value;
+        var destinationAddress = document.getElementById('destination').value;
+      
+        if (departureAddress) {
+          geocodeAddress(departureAddress, 'departure', function () {
+            if (destinationAddress) {
+              geocodeAddress(destinationAddress, 'destination', function () {
+                // 지오코딩 완료 후 폼 제출
+                document.querySelector('form').submit();
+              });
+            } else {
+              alert('도착지 주소를 입력하세요.');
+            }
+          });
+        } else {
+          alert('출발지 주소를 입력하세요.');
+        }
+      }
+      
+      function geocodeAddress(address, target, callback) {
+        var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&addressFlag=F02&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&page=1&count=20`;
+        var tmapApiKey = '{{ tmap_api_key }}';
+      
+        const options = {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            appKey: tmapApiKey
+          }
+        };
+      
+        fetch(apiUrl, options)
+          .then((response) => {
+            if (!response.ok) {
+              return response.text().then((text) => {
+                throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`);
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.coordinateInfo && data.coordinateInfo.coordinate) {
+              var lat = data.coordinateInfo.coordinate[0].newlat;
+              var lon = data.coordinateInfo.coordinate[0].newlon;
+      
+              document.getElementById(`${target}_lat`).value = lat;
+              document.getElementById(`${target}_lon`).value = lon;
+              console.log(`지오코딩 성공: ${address} -> Lat: ${lat}, Lon: ${lon}`);
+
+              // 성공 알림창 추가
+              alert(`${address}의 지오코딩이 성공했습니다. 위도: ${lat}, 경도: ${lon}`);
+      
+              // 콜백 호출
+              if (callback) callback();
+            } else {
+              console.error(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
+              alert(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert(`지오코딩 중 오류 발생: ${error.message}`);
+          });
+      }
+    </script>
   </body>
 </html>

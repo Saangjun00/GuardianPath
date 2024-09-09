@@ -46,11 +46,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function openAddressSearch(fieldId) {
+function openAddressSearch(target) {
     new daum.Postcode({
         oncomplete: function(data) {
             var address = data.roadAddress || data.jibunAddress;
-            document.getElementById(fieldId).value = address;
+            document.getElementById(target).value = address;
         }
     }).open();
 }

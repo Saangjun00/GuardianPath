@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from map.models import UserRoute, SearchHistory
+from django.conf import settings
 
 def home(request):
     # 로그인된 사용자의 검색 기록을 불러옴
@@ -18,9 +19,12 @@ def home(request):
     request.session.pop('departure', None)
     request.session.pop('destination', None)
 
+    tmap_api_key = settings.TMAP_API_KEY 
+
     return render(request, 'home.html', {
         'search_history': search_history,
         'favorite_routes': favorite_routes,
         'departure': departure,
         'destination': destination,
+        'tmap_api_key': tmap_api_key,
     })

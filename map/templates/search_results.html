@@ -28,6 +28,35 @@
       <div id="map_div"></div>
     </div>
     <script src="{% static 'js/main.js' %}"></script>
-    <script src="{% static 'js/map.js' %}"></script>
+    <script>
+      {% comment %} var departureLat = {{ departure_lat }};
+      var departureLon = {{ departure_lon }};
+      var destinationLat = {{ destination_lat }};
+      var destinationLon = {{ destination_lon }}; {% endcomment %}
+
+      var map = new Tmapv2.Map("map_div", {
+          center: new Tmapv2.LatLng(37.566681, 126.978414),
+          width: "100%",
+          height: "400px"
+      });
+  
+      // 출발지 마커 생성
+      var marker1 = new Tmapv2.Marker({
+          position: new Tmapv2.LatLng(departureLat, departureLon),
+          map: map
+      });
+  
+      // 도착지 마커 생성
+      var marker2 = new Tmapv2.Marker({
+          position: new Tmapv2.LatLng(destinationLat, destinationLon),
+          map: map
+      });
+  
+      // 두 좌표를 포함하는 줌 범위 설정
+      var bounds = new Tmapv2.LatLngBounds();
+      bounds.extend(new Tmapv2.LatLng(departureLat, departureLon));
+      bounds.extend(new Tmapv2.LatLng(destinationLat, destinationLon));
+      map.fitBounds(bounds);
+  </script>
   </body>
 </html>
