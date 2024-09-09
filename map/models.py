@@ -21,3 +21,17 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.departure} -> {self.destination}"
+
+class ElevatorLocation(models.Model):
+    SubEleExitID = models.IntegerField(primary_key=True)
+    SubEleExitKind = models.IntegerField()
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+
+    class Meta:
+        managed = False  # 기존 테이블과 직접 연동할 경우 False로 설정
+        db_table = 'elevator_location'  # 데이터베이스 테이블 이름 
+
+    def __str__(self):
+        return f"{self.위도}, {self.경도}"

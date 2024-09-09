@@ -4,6 +4,8 @@ from .models import UserRoute, SearchHistory
 from users.models import User
 from django.urls import reverse
 from django.contrib import messages
+from .models import ElevatorLocation
+import json  # JSON 변환을 위해 import 추가
 
 def save_route(request):
     if request.method == 'POST':
@@ -55,17 +57,31 @@ def search_results(request):
     user_type = request.GET.get('user_type')
 
     # 길찾기 검색 결과 처리 (현재 미구현)
-    results = 1
+    results = 1  # 결과가 현재 미구현인 경우 임시 값으로 설정
 
+    # 데이터베이스에서 좌표 데이터 가져오기 (엘리베이터 위치 데이터)
+    locations = ElevatorLocation.objects.all()
+
+    # 위치 데이터를 JSON 형식으로 변환
+    location_data = [
+        {
+            'lat': location.latitude,
+            'lon': location.longitude
+        }
+        for location in locations
+    ]
+    location_data_json = json.dumps(location_data)  # Python 데이터를 JSON으로 변환
+
+    # 템플릿에 전달할 컨텍스트 데이터 구성
     context = {
         'tmap_api_key': tmap_api_key,
         'departure': departure,
         'destination': destination,
         'user_type': user_type,
         'results': results,
+        'location_data_json': location_data_json,  # JSON 데이터 전달
     }
-
-    return render(request, 'search_results.html', context)
+    return render(request, 'search_results.html',  context)
 
 def clear_search_history(request):
     if request.user.is_authenticated:
@@ -79,3 +95,5 @@ def delete_favorite_route(request, route_id):
     favorite_route.delete()
 
     return redirect('home')
+
+
