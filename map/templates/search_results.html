@@ -25,6 +25,10 @@
       <p>출발지: {{ departure }}</p>
       <p>도착지: {{ destination }}</p>
       <p>유저 타입: {{ user_type }}</p>
+      <p>출발지 위도: {{ departure_lat }}</p>
+      <p>출발지 경도: {{ departure_lon }}</p>
+      <p>도착지 위도: {{ destination_lat }}</p>
+      <p>도착지 경도: {{ destination_lon }}</p>
       <div id="map_div"></div>
     </div>
     <script src="{% static 'js/main.js' %}"></script>

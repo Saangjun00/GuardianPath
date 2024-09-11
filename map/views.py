@@ -12,6 +12,10 @@ def save_route(request):
         user_type = request.POST.get('user_type')
         departure = request.POST.get('departure')
         destination = request.POST.get('destination')
+        departure_lat = request.POST.get('departure_lat')
+        departure_lon = request.POST.get('departure_lon')
+        destination_lat = request.POST.get('destination_lat')
+        destination_lon = request.POST.get('destination_lon')
 
         # 유저 타입이 입력되지 않은 경우
         if not user_type:
@@ -43,7 +47,11 @@ def save_route(request):
                     destination=destination
                 )
 
-            return redirect(reverse('search_results') + f"?departure={departure}&destination={destination}&user_type={user_type}")
+            # 경도와 위도를 함께 전달
+            return redirect(
+                reverse('search_results') + 
+                f"?departure={departure}&destination={destination}&user_type={user_type}&departure_lat={departure_lat}&departure_lon={departure_lon}&destination_lat={destination_lat}&destination_lon={destination_lon}"
+            )
 
     return redirect('home')
 
@@ -55,8 +63,6 @@ def search_results(request):
     departure = request.GET.get('departure')
     destination = request.GET.get('destination')
     user_type = request.GET.get('user_type')
-
-    # GET 요청으로 전달된 경도 위도 가져오기
     departure_lat = request.GET.get('departure_lat')
     departure_lon = request.GET.get('departure_lon')
     destination_lat = request.GET.get('destination_lat')
@@ -70,6 +76,10 @@ def search_results(request):
         'departure': departure,
         'destination': destination,
         'user_type': user_type,
+        'departure_lat': departure_lat,
+        'departure_lon': departure_lon,
+        'destination_lat': destination_lat,
+        'destination_lon': destination_lon,
         'results': results,
     }
 

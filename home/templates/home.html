@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_api_key }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <header>
@@ -48,7 +49,7 @@
       <div class="title">
         <h1>Guardian Path</h1>
       </div>
-      <form method="post" action="{% url 'save_route' %}">
+      <form method="POST" action="{% url 'save_route' %}">
         {% csrf_token %}
 
         <div class="user-types">
@@ -147,69 +148,69 @@
     <script src="{% static 'js/home.js' %}"></script>
     <script>
       function startGeocoding() {
-        var departureAddress = document.getElementById('departure').value;
-        var destinationAddress = document.getElementById('destination').value;
+        var departureAddress = document.getElementById('departure').value
+        var destinationAddress = document.getElementById('destination').value
       
         if (departureAddress) {
           geocodeAddress(departureAddress, 'departure', function () {
             if (destinationAddress) {
               geocodeAddress(destinationAddress, 'destination', function () {
                 // 지오코딩 완료 후 폼 제출
-                document.querySelector('form').submit();
-              });
+                document.querySelector('form').submit()
+              })
             } else {
-              alert('도착지 주소를 입력하세요.');
+              alert('도착지 주소를 입력하세요.')
             }
-          });
+          })
         } else {
-          alert('출발지 주소를 입력하세요.');
+          alert('출발지 주소를 입력하세요.')
         }
       }
       
       function geocodeAddress(address, target, callback) {
-        var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&addressFlag=F02&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&page=1&count=20`;
-        var tmapApiKey = '{{ tmap_api_key }}';
+        var apiKey = '{{ tmap_api_key }}';
+        var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&appKey=${apiKey}`;
       
-        const options = {
+        $.ajax({
           method: 'GET',
-          headers: {
-            accept: 'application/json',
-            appKey: tmapApiKey
-          }
-        };
+          url: apiUrl,
+          success: function (response) {
+            console.log(response); // 응답 데이터를 로그로 출력하여 확인
       
-        fetch(apiUrl, options)
-          .then((response) => {
-            if (!response.ok) {
-              return response.text().then((text) => {
-                throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`);
-              });
-            }
-            return response.json();
-          })
-          .then((data) => {
-            if (data.coordinateInfo && data.coordinateInfo.coordinate) {
-              var lat = data.coordinateInfo.coordinate[0].newlat;
-              var lon = data.coordinateInfo.coordinate[0].newlon;
+            if (response.coordinateInfo && response.coordinateInfo.coordinate.length > 0) {
+              var result = response.coordinateInfo.coordinate[0];
+              
+              // 구주소일 경우 lat, lon을 사용하고, 새주소일 경우 newLat, newLon을 사용
+              var lat = result.lat || result.newLat;
+              var lon = result.lon || result.newLon;
       
-              document.getElementById(`${target}_lat`).value = lat;
-              document.getElementById(`${target}_lon`).value = lon;
-              console.log(`지오코딩 성공: ${address} -> Lat: ${lat}, Lon: ${lon}`);
-
-              // 성공 알림창 추가
-              alert(`${address}의 지오코딩이 성공했습니다. 위도: ${lat}, 경도: ${lon}`);
+              if (lat && lon) {
+                if (target === 'departure') {
+                  document.getElementById('departure_lat').value = lat;
+                  document.getElementById('departure_lon').value = lon;
+                } else if (target === 'destination') {
+                  document.getElementById('destination_lat').value = lat;
+                  document.getElementById('destination_lon').value = lon;
+                }
       
-              // 콜백 호출
-              if (callback) callback();
+                alert(`${address}의 지오코딩이 성공했습니다. 위도: ${lat}, 경도: ${lon}`);
+      
+                // 콜백 함수가 있을 경우 호출
+                if (callback) callback();
+              } else {
+                console.error(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
+                alert(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
+              }
             } else {
               console.error(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
               alert(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`);
             }
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert(`지오코딩 중 오류 발생: ${error.message}`);
-          });
+          },
+          error: function (request, status, error) {
+            console.log('Geocoding error: ' + error);
+            alert('지오코딩에 실패했습니다.');
+          }
+        });
       }
     </script>
   </body>
