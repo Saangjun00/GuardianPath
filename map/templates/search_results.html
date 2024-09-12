@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/login_style.css' %}" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet" />
     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_api_key }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <header>
@@ -25,42 +26,83 @@
       <p>출발지: {{ departure }}</p>
       <p>도착지: {{ destination }}</p>
       <p>유저 타입: {{ user_type }}</p>
-      <p>출발지 위도: {{ departure_lat }}</p>
-      <p>출발지 경도: {{ departure_lon }}</p>
-      <p>도착지 위도: {{ destination_lat }}</p>
-      <p>도착지 경도: {{ destination_lon }}</p>
       <div id="map_div"></div>
     </div>
     <script src="{% static 'js/main.js' %}"></script>
     <script>
-      {% comment %} var departureLat = {{ departure_lat }};
-      var departureLon = {{ departure_lon }};
-      var destinationLat = {{ destination_lat }};
-      var destinationLon = {{ destination_lon }}; {% endcomment %}
-
-      var map = new Tmapv2.Map("map_div", {
-          center: new Tmapv2.LatLng(37.566681, 126.978414),
-          width: "100%",
-          height: "400px"
-      });
-  
-      // 출발지 마커 생성
-      var marker1 = new Tmapv2.Marker({
-          position: new Tmapv2.LatLng(departureLat, departureLon),
-          map: map
-      });
-  
-      // 도착지 마커 생성
-      var marker2 = new Tmapv2.Marker({
-          position: new Tmapv2.LatLng(destinationLat, destinationLon),
-          map: map
-      });
-  
-      // 두 좌표를 포함하는 줌 범위 설정
-      var bounds = new Tmapv2.LatLngBounds();
-      bounds.extend(new Tmapv2.LatLng(departureLat, departureLon));
-      bounds.extend(new Tmapv2.LatLng(destinationLat, destinationLon));
-      map.fitBounds(bounds);
-  </script>
+      var map
+      
+      window.onload = function () {
+        // 지도 초기화
+        map = new Tmapv2.Map('map_div', {
+          center: new Tmapv2.LatLng(37.566535, 126.97796919999996), // 서울 중심 좌표
+          width: '100%',
+          height: '400px',
+          zoom: 15
+        })
+      
+        // 쿼리 파라미터 추출
+        const urlParams = new URLSearchParams(window.location.search)
+        const departureAddress = urlParams.get('departure')
+        const destinationAddress = urlParams.get('destination')
+      
+        if (departureAddress) {
+          geocodeAddress(departureAddress, 'departure')
+        }
+      
+        if (destinationAddress) {
+          geocodeAddress(destinationAddress, 'destination')
+        }
+      }
+      
+      function geocodeAddress(address, target) {
+        var apiKey = '{{ tmap_api_key }}'
+        var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&appKey=${apiKey}`
+      
+        $.ajax({
+          method: 'GET',
+          url: apiUrl,
+          success: function (response) {
+            if (response.coordinateInfo && response.coordinateInfo.coordinate.length > 0) {
+              var result = response.coordinateInfo.coordinate[0]
+              var lat = result.lat || result.newLat
+              var lon = result.lon || result.newLon
+      
+              if (lat && lon) {
+                // 지도에 마커 추가
+                addMarker(lat, lon, target)
+              } else {
+                alert(`${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
+              }
+            } else {
+              alert(`${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
+            }
+          },
+          error: function () {
+            alert('지오코딩에 실패했습니다.')
+          }
+        })
+      }
+      
+      function addMarker(lat, lon, target) {
+        var iconUrl
+      
+        if (target === 'departure') {
+          iconUrl = "{% static 'img/departure-marker.png' %}"
+        } else if (target === 'destination') {
+          iconUrl = "{% static 'img/destination-marker.png' %}"
+        }
+      
+        var marker = new Tmapv2.Marker({
+          position: new Tmapv2.LatLng(lat, lon),
+          map: map,
+          icon: iconUrl,
+          iconSize: new Tmapv2.Size(40, 40)
+        })
+      
+        // 지도 중앙을 마커로 이동
+        map.setCenter(new Tmapv2.LatLng(lat, lon))
+      }
+    </script>
   </body>
 </html>

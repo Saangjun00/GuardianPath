@@ -8,8 +8,6 @@
     <title>Guardian Path</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_api_key }}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <header>
@@ -86,14 +84,8 @@
               </div>
             </div>
 
-            <!-- 숨김 필드 추가 -->
-            <input type="hidden" id="departure_lat" name="departure_lat" value="" />
-            <input type="hidden" id="departure_lon" name="departure_lon" value="" />
-            <input type="hidden" id="destination_lat" name="destination_lat" value="" />
-            <input type="hidden" id="destination_lon" name="destination_lon" value="" />
-
             <button class="favorite-btn" type="submit" name="save_favorite">즐겨찾기 경로 저장</button>
-            <button class="search-btn" type="submit" name="search_route" onclick="startGeocoding(event)">검색</button>
+            <button class="search-btn" type="submit" name="search_route">검색</button>
           </div>
         </div>
       </form>
@@ -146,84 +138,5 @@
       {% endif %}
     </div>
     <script src="{% static 'js/home.js' %}"></script>
-    <script>
-      function startGeocoding(event) {
-        event.preventDefault();
-    
-        var departureAddress = document.getElementById('departure').value;
-        var destinationAddress = document.getElementById('destination').value;
-    
-        if (departureAddress) {
-            geocodeAddress(departureAddress, 'departure', function () {
-                if (destinationAddress) {
-                    geocodeAddress(destinationAddress, 'destination', function () {
-                        var departureLat = document.getElementById('departure_lat').value;
-                        var departureLon = document.getElementById('departure_lon').value;
-                        var destinationLat = document.getElementById('destination_lat').value;
-                        var destinationLon = document.getElementById('destination_lon').value;
-    
-                        console.log('Departure Lat:', departureLat, 'Lon:', departureLon);
-                        console.log('Destination Lat:', destinationLat, 'Lon:', destinationLon);
-    
-                        if (departureLat && departureLon && destinationLat && destinationLon) {
-                            alert('위도/경도 값이 저장되었습니다. 폼을 제출합니다.');
-                            document.querySelector('form').submit();
-                        } else {
-                            alert('위도/경도 값이 누락되었습니다.');
-                        }
-                    });
-                } else {
-                    alert('도착지 주소를 입력하세요.');
-                }
-            });
-        } else {
-            alert('출발지 주소를 입력하세요.');
-        }
-    }
-      
-      function geocodeAddress(address, target, callback) {
-        var apiKey = '{{ tmap_api_key }}'
-        var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&appKey=${apiKey}`
-      
-        $.ajax({
-          method: 'GET',
-          url: apiUrl,
-          success: function (response) {
-            console.log(response) // 응답 데이터를 로그로 출력하여 확인
-      
-            if (response.coordinateInfo && response.coordinateInfo.coordinate.length > 0) {
-              var result = response.coordinateInfo.coordinate[0]
-      
-              // 구주소일 경우 lat, lon을 사용하고, 새주소일 경우 newLat, newLon을 사용
-              var lat = result.lat || result.newLat
-              var lon = result.lon || result.newLon
-      
-              if (lat && lon) {
-                if (target === 'departure') {
-                  document.getElementById('departure_lat').value = lat
-                  document.getElementById('departure_lon').value = lon
-                } else if (target === 'destination') {
-                  document.getElementById('destination_lat').value = lat
-                  document.getElementById('destination_lon').value = lon
-                }
-      
-                // 콜백 함수가 있을 경우 호출
-                if (callback) callback()
-              } else {
-                console.error(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
-                alert(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
-              }
-            } else {
-              console.error(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
-              alert(`지오코딩 실패: ${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
-            }
-          },
-          error: function (request, status, error) {
-            console.log('Geocoding error: ' + error)
-            alert('지오코딩에 실패했습니다.')
-          }
-        })
-      }
-    </script>
   </body>
 </html>
