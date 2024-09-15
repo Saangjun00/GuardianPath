@@ -12,11 +12,20 @@ def save_route(request):
         departure = request.POST.get('departure')
         destination = request.POST.get('destination')
 
+        # 출발지와 도착지 입력 확인
+        if not departure or not destination:
+            messages.error(request, '출발지와 도착지를 모두 입력해주세요.')
+            request.session['departure'] = departure
+            request.session['destination'] = destination
+            request.session['user_type'] = user_type
+            return redirect(reverse('home:home'))
+
         # 유저 타입이 입력되지 않은 경우
         if not user_type:
             messages.error(request, '유저 타입을 선택해주세요.')
             request.session['departure'] = departure
             request.session['destination'] = destination
+            request.session['user_type'] = user_type
             return redirect(reverse('home:home'))
 
         # 경로를 즐겨찾기로 저장
