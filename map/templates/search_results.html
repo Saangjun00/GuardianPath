@@ -31,6 +31,9 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script>
       var map
+      var departureLatLng = null
+      var destinationLatLng = null
+      var polyline
       
       window.onload = function () {
         // 지도 초기화
@@ -58,7 +61,6 @@
       function geocodeAddress(address, target) {
         var apiKey = '{{ tmap_api_key }}'
         var apiUrl = `https://apis.openapi.sk.com/tmap/geo/fullAddrGeo?version=1&format=json&coordType=WGS84GEO&fullAddr=${encodeURIComponent(address)}&appKey=${apiKey}`
-      
         $.ajax({
           method: 'GET',
           url: apiUrl,
@@ -69,8 +71,18 @@
               var lon = result.lon || result.newLon
       
               if (lat && lon) {
-                // 지도에 마커 추가
-                addMarker(lat, lon, target)
+                if (target === 'departure') {
+                  departureLatLng = new Tmapv2.LatLng(lat, lon)
+                  addMarker(lat, lon, 'departure')
+                } else if (target === 'destination') {
+                  destinationLatLng = new Tmapv2.LatLng(lat, lon)
+                  addMarker(lat, lon, 'destination')
+                }
+      
+                // 출발지와 도착지가 모두 정의된 경우 대중교통 경로 검색
+                if (departureLatLng && destinationLatLng) {
+                  searchPublicTransportRoute(departureLatLng, destinationLatLng)
+                }
               } else {
                 alert(`${address}에 대한 좌표 정보를 찾을 수 없습니다.`)
               }
@@ -102,6 +114,100 @@
       
         // 지도 중앙을 마커로 이동
         map.setCenter(new Tmapv2.LatLng(lat, lon))
+      }
+      
+      function searchPublicTransportRoute(startLatLng, endLatLng) {
+        var apiKey = '{{ tmap_api_key }}';
+        var apiUrl = 'https://apis.openapi.sk.com/transit/routes'; // API 엔드포인트
+
+        var requestData = {
+          startX: startLatLng.lng().toString(),
+          startY: startLatLng.lat().toString(),
+          endX: endLatLng.lng().toString(),
+          endY: endLatLng.lat().toString(),
+          lang: 0,
+          count: 10
+        };
+
+        // 좌표 및 요청 데이터 확인 로그
+        console.log('출발지 좌표:', startLatLng.lng().toString(), startLatLng.lat().toString());
+        console.log('도착지 좌표:', endLatLng.lng().toString(), endLatLng.lat().toString());
+        console.log('API 요청 데이터:', requestData);
+
+        $.ajax({
+          url: apiUrl,
+          method: 'POST',
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            appKey: apiKey
+          },
+          data: JSON.stringify(requestData),
+          success: function (response) {
+            console.log('API 전체 응답:', response);
+
+            if (response.metaData.plan && response.metaData.plan.itineraries) {
+              console.log('Plan 데이터 확인:', response.metaData.plan);
+
+              // 기존 폴리라인 제거 (이미 있을 경우)
+              if (polyline) {
+                polyline.setMap(null);
+              }
+
+              // 경로 좌표를 담을 배열
+              var pathCoordinates = [];
+
+              response.metaData.plan.itineraries.forEach((itinerary, index) => {
+                itinerary.legs.forEach((leg, legIndex) => {
+                  for (var stepKey in leg.steps) {
+                    if (leg.steps.hasOwnProperty(stepKey)) {
+                      var step = leg.steps[stepKey];
+                      console.log(`Step ${stepKey}:`, step);
+
+                      // linestring을 이용해 경로 좌표를 추출
+                      if (step.linestring) {
+                        var coordsArray = step.linestring.split(' ');
+                        coordsArray.forEach((coord) => {
+                          var latLon = coord.split(',');
+                          var lat = parseFloat(latLon[1]);
+                          var lon = parseFloat(latLon[0]);
+
+                          if (!isNaN(lat) && !isNaN(lon)) {
+                            pathCoordinates.push(new Tmapv2.LatLng(lat, lon));
+                          }
+                        });
+                      } else {
+                        console.error('linestring 정보가 없습니다.');
+                      }
+                    }
+                  }
+                });
+              });
+
+              // 폴리라인 생성
+              if (pathCoordinates.length > 0) {
+                polyline = new Tmapv2.Polyline({
+                  path: pathCoordinates,
+                  strokeColor: '#FF0000', // 라인 색상
+                  strokeWeight: 6, // 라인 두께
+                  map: map
+                });
+
+                // 경로를 중심으로 지도 확대
+                var bounds = new Tmapv2.LatLngBounds();
+                pathCoordinates.forEach((coord) => bounds.extend(coord));
+                map.fitBounds(bounds);
+              }
+            } else {
+              console.error('경로 탐색 실패:', response);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error('API 호출 실패:', status, error);
+            console.error('응답 데이터:', xhr.responseText);
+            alert('대중교통 경로 검색에 실패했습니다.');
+          }
+        });
       }
     </script>
   </body>

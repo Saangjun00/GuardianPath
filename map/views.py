@@ -156,7 +156,7 @@ def validate_address(address):
                     full_address = full_address_new if road_name and building_index else full_address_old
 
                     # 상세 주소 체크: 번지수(건물번호)가 포함된 도로명 주소인지 확인
-                    if not road_name or not bunji:
+                    if not road_name or not building_index:
                         return False, "상세 주소까지 입력해주세요."
                     
                     # 상세 주소 체크: 번지수가 포함된 도로명 주소인지 확인
@@ -167,3 +167,28 @@ def validate_address(address):
                     return True, None
 
     return False, "유효하지 않은 주소입니다."
+
+def get_public_transport_route(departure, destination):
+    tmap_api_key = settings.TMAP_API_KEY
+    url = "https://apis.openapi.sk.com/tmap/routes/publicTransportation?version=1&format=json"
+
+    headers = {
+        'appKey': tmap_api_key
+    }
+
+    params = {
+        'startX': departure['lon'] or departure['newLon'],  # 출발지 경도
+        'startY': departure['lat'] or departure['newLat'],  # 출발지 위도
+        'endX': destination['lon'] or destination['newLon'],  # 도착지 경도
+        'endY': destination['lat'] or destination['newLat'],  # 도착지 위도
+        'reqCoordType': 'WGS84GEO',
+        'resCoordType': 'EPSG3857'
+    }
+
+    response = requests.get(url, headers=headers, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        return None
