@@ -431,3 +431,42 @@
     width: 100%;
     height: 100%;
   }
+
+  .route-info {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .route-info h3 {
+    margin-bottom: 10px;
+  }
+  
+  #route_detail {
+    font-size: 14px;
+  }
+
+  .route-list {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .route-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .route-list li {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .route-list li:hover {
+    background-color: #e0e0e0;
+  }
