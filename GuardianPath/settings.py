@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'GuardianPath.middleware.AdminIPWhitelistMiddleware',
 ]
 
 ROOT_URLCONF = 'GuardianPath.urls'
