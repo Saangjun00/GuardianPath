@@ -10,10 +10,28 @@
   </head>
   <body>
     <div id="map_div" style="width:100%; height:500px;"></div>
-    
+
     <script>
       var map;
-      var markers = [];  // 모든 마커를 저장하는 배열
+      var elevatorMarkers = [];  // 엘리베이터 마커를 저장하는 배열
+      var escalatorMarkers = [];  // 에스컬레이터 마커를 저장하는 배열
+
+      var elevatorLocations = JSON.parse('{{ elevator_data_json|safe }}');
+      var escalatorLocations = JSON.parse('{{ escalator_data_json|safe }}');
+
+      function addMarker(lat, lon, type) {
+        var marker = new Tmapv2.Marker({
+          position: new Tmapv2.LatLng(lat, lon),
+          map: map,
+          // 기본 TMap 마커를 사용하기 위해 icon과 iconSize 설정을 제거합니다.
+        });
+
+        if (type === 'elevator') {
+          elevatorMarkers.push(marker);  // 엘리베이터 마커 배열에 저장
+        } else if (type === 'escalator') {
+          escalatorMarkers.push(marker);  // 에스컬레이터 마커 배열에 저장
+        }
+      }
 
       function initTmap() {
         // 지도 초기화
@@ -24,19 +42,14 @@
           zoom: 15
         });
 
-        // Python에서 전달된 JSON 데이터를 JavaScript 배열로 변환
-        var locations = JSON.parse('{{ location_data_json|safe }}');
-        
-        console.log(locations);  // 좌표 배열 출력
+        // 엘리베이터 마커 생성
+        elevatorLocations.forEach(function(location) {
+          addMarker(location.lat, location.lon, 'elevator');
+        });
 
-        // 마커 생성
-        locations.forEach(function(location) {
-          var marker = new Tmapv2.Marker({
-            position: new Tmapv2.LatLng(location.lat, location.lon),
-            //(나중에 마커 사진 만들면 사진넣고 주석 풀것) icon: "{% static 'images/custom_marker.png' %}",  // 사용자 정의 마커 이미지 경로 
-            map: map
-          });
-          markers.push(marker);  // 생성된 마커를 배열에 저장
+        // 에스컬레이터 마커 생성
+        escalatorLocations.forEach(function(location) {
+          addMarker(location.lat, location.lon, 'escalator');
         });
 
         // 줌 레벨에 따라 마커를 숨기거나 표시하는 함수
@@ -46,22 +59,27 @@
 
           // 줌 레벨이 14 이상일 때 마커 표시, 그 이하면 마커 숨기기
           if (zoomLevel >= 14) {
-            markers.forEach(function(marker) {
-              marker.setVisible(true);  // 마커 보이기
+            elevatorMarkers.forEach(function(marker) {
+              marker.setVisible(true);  // 엘리베이터 마커 보이기
+            });
+            escalatorMarkers.forEach(function(marker) {
+              marker.setVisible(true);  // 에스컬레이터 마커 보이기
             });
           } else {
-            markers.forEach(function(marker) {
-              marker.setVisible(false);  // 마커 숨기기
+            elevatorMarkers.forEach(function(marker) {
+              marker.setVisible(false);  // 엘리베이터 마커 숨기기
+            });
+            escalatorMarkers.forEach(function(marker) {
+              marker.setVisible(false);  // 에스컬레이터 마커 숨기기
             });
           }
         });
       }
 
       // 페이지 로드 후 실행
-      window.onload = function() {
+      document.addEventListener('DOMContentLoaded', function() {
         initTmap();
-      };
+      });
     </script>
   </body>
 </html>
-

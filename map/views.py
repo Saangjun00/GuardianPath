@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
-from .models import UserRoute, SearchHistory
+from .models import UserRoute, SearchHistory, ElevatorLocation, EscalatorLocation
 from users.models import User
 from django.urls import reverse
 from django.contrib import messages
-from .models import ElevatorLocation
 import json  # JSON 변환을 위해 import 추가
 
 def save_route(request):
@@ -24,11 +23,11 @@ def save_route(request):
         if 'save_favorite' in request.POST:
             if request.user.is_authenticated:
                 UserRoute.objects.create(
-                    user = request.user,
-                    user_type = user_type,
-                    departure = departure,
-                    destination = destination,
-                    is_favorite = True
+                    user=request.user,
+                    user_type=user_type,
+                    departure=departure,
+                    destination=destination,
+                    is_favorite=True
                 )
 
             return redirect('home')
@@ -47,6 +46,7 @@ def save_route(request):
 
     return render(request, 'home.html')
 
+
 def search_results(request):
     # Tmap API 키
     tmap_api_key = settings.TMAP_API_KEY
@@ -59,18 +59,31 @@ def search_results(request):
     # 길찾기 검색 결과 처리 (현재 미구현)
     results = 1  # 결과가 현재 미구현인 경우 임시 값으로 설정
 
-    # 데이터베이스에서 좌표 데이터 가져오기 (엘리베이터 위치 데이터)
-    locations = ElevatorLocation.objects.all()
+    # 데이터베이스에서 엘리베이터 및 에스컬레이터 좌표 데이터 가져오기
+    elevator_locations = ElevatorLocation.objects.all()
+    escalator_locations = EscalatorLocation.objects.all()
 
-    # 위치 데이터를 JSON 형식으로 변환
-    location_data = [
+    # 엘리베이터 위치 데이터를 JSON 형식으로 변환
+    elevator_data = [
         {
             'lat': location.latitude,
             'lon': location.longitude
         }
-        for location in locations
+        for location in elevator_locations
     ]
-    location_data_json = json.dumps(location_data)  # Python 데이터를 JSON으로 변환
+
+    # 에스컬레이터 위치 데이터를 JSON 형식으로 변환
+    escalator_data = [
+        {
+            'lat': location.esc_latitude,
+            'lon': location.esc_longitude
+        }
+        for location in escalator_locations
+    ]
+
+    # JSON 형식으로 변환
+    elevator_data_json = json.dumps(elevator_data)
+    escalator_data_json = json.dumps(escalator_data)
 
     # 템플릿에 전달할 컨텍스트 데이터 구성
     context = {
@@ -79,9 +92,12 @@ def search_results(request):
         'destination': destination,
         'user_type': user_type,
         'results': results,
-        'location_data_json': location_data_json,  # JSON 데이터 전달
+        'elevator_data_json': elevator_data_json,  # 엘리베이터 위치 데이터
+        'escalator_data_json': escalator_data_json,  # 에스컬레이터 위치 데이터
     }
-    return render(request, 'search_results.html',  context)
+
+    return render(request, 'search_results.html', context)
+
 
 def clear_search_history(request):
     if request.user.is_authenticated:
@@ -90,10 +106,12 @@ def clear_search_history(request):
     
     return redirect(reverse('home:home'))
 
+
 def delete_favorite_route(request, route_id):
     favorite_route = get_object_or_404(UserRoute, id=route_id, user=request.user, is_favorite=True)
     favorite_route.delete()
 
     return redirect('home')
+
 
 

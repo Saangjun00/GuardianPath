@@ -35,3 +35,15 @@ class ElevatorLocation(models.Model):
 
     def __str__(self):
         return f"{self.위도}, {self.경도}"
+
+class EscalatorLocation(models.Model):
+    esc_ID = models.IntegerField(primary_key=True)
+    esc_latitude = models.FloatField()
+    esc_longitude = models.FloatField()
+
+    class Meta:
+        managed = False  # 기존 테이블과 직접 연동할 경우 False로 설정
+        db_table = 'escalator_location'  # 데이터베이스 테이블 이름
+
+    def __str__(self):
+        return f"{self.esc_latitude}, {self.esc_longitude}"
