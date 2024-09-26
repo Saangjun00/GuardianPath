@@ -249,3 +249,5 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+LOGIN_URL = 'login_view'

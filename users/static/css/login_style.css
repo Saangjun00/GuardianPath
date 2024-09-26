@@ -44,7 +44,7 @@
     box-shadow: 10px 10px 10px #d1d9e6, -10px -10px 10px #f9f9f9;
     border-radius: 12px;
     overflow: hidden;
-    margin-top: 60px; 
+    margin-top: 70px; 
   }
   @media (max-width: 1200px) {
     .main {
@@ -474,14 +474,15 @@
   /* 패널의 기본 스타일 */
 .panel {
   position: fixed;
-  left: -200px; /* 패널을 기본적으로 화면 밖으로 숨김 */
+  left: -400px; /* 패널을 기본적으로 화면 밖으로 숨김 */
   top: 0;
-  width: 300px;
+  width: 500px;
   height: 100%;
-  background-color: white;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  transition: left 0.3s ease; /* 부드러운 전환 효과 */
+  background-color: #f9f9f9;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+  transition: left 0.4s ease; /* 부드러운 전환 효과 */
   z-index: 3; /* 패널이 지도 위에 표시되도록 z-index 설정 */
+  overflow-y: auto;
 }
 
 .panel.open {
@@ -489,24 +490,104 @@
 }
 
 .panel-header {
-  background-color: #333;
-  color: white;
+  background-color: #4a4a4a;
+  color: #ffffff;
   padding: 20px;
   cursor: pointer;
+  font-size: 22px;
+  letter-spacing: 1px;
 }
 
 #panel-toggle-btn {
   float: right;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 0;
 }
 
 .panel-body {
-  padding: 10px;
-  overflow-y: auto; /* 내용이 많으면 스크롤 가능 */
+  padding: 20px;
+  color: #333;
 }
 
 .panel-body ul {
   padding: 0;
   list-style-type: none;
+}
+
+.panel-body li {
+  margin-bottom: 12px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  font-weight: 600;
+  color: #333;
+}
+
+.title {
+  position: fixed;
+  width: 100%;
+  text-align: center;
+  top: 3px;
+  font-size: 36px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  font-family:Arial, Helvetica, sans-serif;
+  z-index: 2;
+}
+
+.title a {
+  text-decoration-line: none;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.title a:visited {
+  color: black;
+}
+
+#route_detail {
+  font-size: 16px;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #444;
+  line-height: 1.5em;
+  position: relative;
+}
+
+#route_detail h2 {
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #007BFF;
+}
+
+#route_list {
+  font-size: 20px;
+  font-family: 'Noto Sans KR', sans-serif;
+  bottom: 10px;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+#route_list h4 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: #007BFF;
+}
+
+#itinerary_list li {
+  list-style: none;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+
+#itinerary_list li:hover {
+  background-color: #dcdcdc;
+  cursor: pointer;
 }

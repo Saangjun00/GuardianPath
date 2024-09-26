@@ -11,6 +11,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
+    <div class="title">
+      <a href="{% url 'home' %}">Guardian Path</a>
+    </div>
     <div class="main">
       <div class="panel">
         <div class="panel-header" onclick="togglePanel()">
@@ -220,11 +223,19 @@
           }
         }
 
-        // 시간 변환 함수 (초를 분으로 변환)
+        // 시간 변환 함수 (초를 시, 분, 초로 변환)
         function formatTime(seconds) {
-          var minutes = Math.floor(seconds / 60);
-          var second = seconds % 60;
-          return `${minutes}분 ${second}초`;
+          var hours = Math.floor(seconds / 3600); // 1시간은 3600초
+          var minutes = Math.floor((seconds % 3600) / 60); // 초를 시간 단위로 나눈 나머지를 분으로 변환
+          var second = seconds % 60; // 초를 분으로 나눈 나머지는 초
+
+          if (hours > 0) {
+            return `${hours}시간 ${minutes}분 ${second}초`;
+          } else if (minutes > 0) {
+            return `${minutes}분 ${second}초`;
+          } else {
+            return `${second}초`;
+          }
         }
 
 
@@ -232,14 +243,17 @@
           <p><strong>경로 타입:</strong> ${getKoreanType(itinerary.pathType || '')}</p>
           <p><strong>총 거리:</strong> ${itinerary.totalDistance ? itinerary.totalDistance / 1000 + ' km' : 'N/A'}</p>
           <p><strong>총 소요시간:</strong> ${formatTime(itinerary.totalTime)}</p>
-          <h4>세부 구간</h4>
+          <p><strong>총 환승횟수:</strong> ${itinerary.transferCount  + '회'}</p>
+          <br>
+          <h2>세부 구간</h2>
           <ul>
             ${itinerary.legs.map((leg) => 
-            `<li><strong>구간 타입:</strong> ${getKoreanMode(leg.mode || '')},
-            ${leg.mode === 'WALK' ? '' : `<strong>노선명:</strong> ${leg.route || 'N/A'}, `}
-            <strong>소요시간:</strong> ${formatTime(leg.sectionTime)}
-            </li>
-            `).join('')}
+              leg.sectionTime > 0 ? 
+              `<li><strong>구간 타입:</strong> ${getKoreanMode(leg.mode || '')},
+              ${leg.mode === 'WALK' ? '' : `<strong>노선명:</strong> ${leg.route || 'N/A'}, `}
+              <strong>소요시간:</strong> ${formatTime(leg.sectionTime)}
+              </li>` : ''
+            ).join('')}
           </ul>
         `;
       
