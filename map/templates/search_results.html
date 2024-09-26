@@ -41,6 +41,13 @@
       var polyline
       var currentPolyline = null
       var currentPolylines = []
+
+      var elevatorMarkers = [];  // 엘리베이터 마커를 저장하는 배열
+      var escalatorMarkers = [];  // 에스컬레이터 마커를 저장하는 배열
+      var elevatorLocations = JSON.parse('{{ elevator_data_json|safe }}');
+      var escalatorLocations = JSON.parse('{{ escalator_data_json|safe }}');
+
+      var userType = "{{ user_type }}";
       
       window.onload = function () {
         // 지도 초기화
@@ -50,6 +57,42 @@
           height: '100%',
           zoom: 15
         })
+
+        // 사용자 타입에 따른 마커 표시 로직
+        if (userType === 'elevator') {
+          // 엘리베이터 사용자라면 엘리베이터 마커만 띄움
+          elevatorLocations.forEach(function(location) {
+            addMarker(location.lat, location.lon, 'elevator');
+          });
+        } else if (userType === 'escalator') {
+          // 에스컬레이터 사용자라면 에스컬레이터 마커만 띄움
+          escalatorLocations.forEach(function(location) {
+            addMarker(location.lat, location.lon, 'escalator');
+          });
+        }
+
+        // 줌 레벨에 따라 마커를 숨기거나 표시하는 함수
+        map.addListener("zoom_changed", function() {
+          var zoomLevel = map.getZoom();  // 현재 줌 레벨을 가져옴
+          console.log('Current Zoom Level:', zoomLevel);
+
+          // 줌 레벨이 14 이상일 때 마커 표시, 그 이하면 마커 숨기기
+          if (zoomLevel >= 14) {
+            elevatorMarkers.forEach(function(marker) {
+              marker.setVisible(true);  // 엘리베이터 마커 보이기
+            });
+            escalatorMarkers.forEach(function(marker) {
+              marker.setVisible(true);  // 에스컬레이터 마커 보이기
+            });
+          } else {
+            elevatorMarkers.forEach(function(marker) {
+              marker.setVisible(false);  // 엘리베이터 마커 숨기기
+            });
+            escalatorMarkers.forEach(function(marker) {
+              marker.setVisible(false);  // 에스컬레이터 마커 숨기기
+            });
+          }
+        });
       
         // 쿼리 파라미터 추출
         const urlParams = new URLSearchParams(window.location.search)
@@ -111,6 +154,12 @@
         } else if (target === 'destination') {
           iconUrl = "{% static 'img/destination-marker.png' %}"
         }
+
+        if (target === 'elevator') {
+          iconUrl = "{% static 'img/ele_img.png' %}";  // 엘리베이터 마커 이미지 경로
+        } else if (target === 'escalator') {
+          iconUrl = "{% static 'img/esc_img.png' %}";  // 에스컬레이터 마커 이미지 경로
+        }
       
         var marker = new Tmapv2.Marker({
           position: new Tmapv2.LatLng(lat, lon),
@@ -118,6 +167,12 @@
           icon: iconUrl,
           iconSize: new Tmapv2.Size(40, 40)
         })
+
+        if (target === 'elevator') {
+          elevatorMarkers.push(marker);  // 엘리베이터 마커 배열에 저장
+        } else if (target === 'escalator') {
+          escalatorMarkers.push(marker);  // 에스컬레이터 마커 배열에 저장
+        }
       
         // 지도 중앙을 마커로 이동
         map.setCenter(new Tmapv2.LatLng(lat, lon))

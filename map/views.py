@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
-from .models import UserRoute, SearchHistory
+from .models import UserRoute, SearchHistory, ElevatorLocation, EscalatorLocation
 from users.models import User
 from django.urls import reverse
 from django.contrib import messages
@@ -92,12 +92,40 @@ def search_results(request):
     # 길찾기 검색 결과 처리 (현재 미구현)
     results = 1
 
+    # 데이터베이스에서 엘리베이터 및 에스컬레이터 좌표 데이터 가져오기
+    elevator_locations = ElevatorLocation.objects.all()
+    escalator_locations = EscalatorLocation.objects.all()
+
+    # 엘리베이터 위치 데이터를 JSON 형식으로 변환
+    elevator_data = [
+        {
+            'lat': location.latitude,
+            'lon': location.longitude
+        }
+        for location in elevator_locations
+    ]
+
+    # 에스컬레이터 위치 데이터를 JSON 형식으로 변환
+    escalator_data = [
+        {
+            'lat': location.esc_latitude,
+            'lon': location.esc_longitude
+        }
+        for location in escalator_locations
+    ]
+
+    # JSON 형식으로 변환
+    elevator_data_json = json.dumps(elevator_data)
+    escalator_data_json = json.dumps(escalator_data)
+
     context = {
         'tmap_api_key': tmap_api_key,
         'departure': departure,
         'destination': destination,
         'user_type': user_type,
         'results': results,
+        'elevator_data_json': elevator_data_json,  # 엘리베이터 위치 데이터
+        'escalator_data_json': escalator_data_json,  # 에스컬레이터 위치 데이터
     }
 
     return render(request, 'search_results.html', context)
