@@ -523,7 +523,7 @@
   color: #333;
 }
 
-.title {
+.map_title {
   position: fixed;
   width: 100%;
   text-align: center;
@@ -536,13 +536,13 @@
   z-index: 2;
 }
 
-.title a {
+.map_title a {
   text-decoration-line: none;
   color: #333;
   transition: color 0.3s ease;
 }
 
-.title a:visited {
+.map_title a:visited {
   color: black;
 }
 
