@@ -5,6 +5,7 @@
   <head>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="stylesheet" type="text/css" href="{% static 'css/login_style.css' %}" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet" />
     <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey={{ tmap_api_key }}"></script>
@@ -160,8 +161,6 @@
         } else if (target === 'escalator') {
           iconUrl = "{% static 'img/esc_img.png' %}";  // 에스컬레이터 마커 이미지 경로
         }
-
-        iconUrl = iconUrl.replace("http://", "https://");
       
         var marker = new Tmapv2.Marker({
           position: new Tmapv2.LatLng(lat, lon),
