@@ -160,6 +160,8 @@
         } else if (target === 'escalator') {
           iconUrl = "{% static 'img/esc_img.png' %}";  // 에스컬레이터 마커 이미지 경로
         }
+
+        iconUrl = iconUrl.replace("http://", "https://");
       
         var marker = new Tmapv2.Marker({
           position: new Tmapv2.LatLng(lat, lon),
