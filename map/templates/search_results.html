@@ -299,6 +299,7 @@
           <p><strong>총 거리:</strong> ${itinerary.totalDistance ? itinerary.totalDistance / 1000 + ' km' : 'N/A'}</p>
           <p><strong>총 소요시간:</strong> ${formatTime(itinerary.totalTime)}</p>
           <p><strong>총 환승횟수:</strong> ${itinerary.transferCount  + '회'}</p>
+          <p><strong>요금:</strong> ${itinerary.fare.regular.totalFare  + '원'}</p>
           <br>
           <h2>세부 구간</h2>
           <ul>
