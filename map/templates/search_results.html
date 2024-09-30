@@ -75,7 +75,6 @@
         // 줌 레벨에 따라 마커를 숨기거나 표시하는 함수
         map.addListener("zoom_changed", function() {
           var zoomLevel = map.getZoom();  // 현재 줌 레벨을 가져옴
-          console.log('Current Zoom Level:', zoomLevel);
 
           // 줌 레벨이 14 이상일 때 마커 표시, 그 이하면 마커 숨기기
           if (zoomLevel >= 14) {
@@ -305,9 +304,15 @@
           <ul>
             ${itinerary.legs.map((leg) => 
               leg.sectionTime > 0 ? 
-              `<li><strong>구간 타입:</strong> ${getKoreanMode(leg.mode || '')},
-              ${leg.mode === 'WALK' ? '' : `<strong>노선명:</strong> ${leg.route || 'N/A'}, `}
-              <strong>소요시간:</strong> ${formatTime(leg.sectionTime)}
+              `<li>
+                <strong>구간 타입:</strong> ${getKoreanMode(leg.mode || '')},
+                ${leg.mode === 'WALK' ? '' : `
+                  <strong>노선명:</strong> 
+                  <span style="color: ${leg.routeColor ? '#' + leg.routeColor : '#000000'};">
+                    ${leg.route || 'N/A'}
+                  </span>, 
+                `}
+                <strong>소요시간:</strong> ${formatTime(leg.sectionTime)}
               </li>` : ''
             ).join('')}
           </ul>
@@ -325,12 +330,13 @@
         // 새로운 경로 폴리라인 그리기 (각 leg마다 별도의 색을 적용)
         itinerary.legs.forEach((leg) => {
           if (leg.mode === 'WALK' && leg.steps) {
+            var pathCoordinates = [];
+
             // 도보 구간은 step을 기반으로 처리 (passShape가 없을 경우)
             for (let i = 0; i < leg.steps.length; i++) {
               let step = leg.steps[i];
               
               if (step.linestring) {
-                var pathCoordinates = [];
                 var coordsArray = step.linestring.split(' ');
                 
                 // step.linestring을 forEach 대신 key로 처리
@@ -377,7 +383,9 @@
             }
       
             if (pathCoordinates.length > 0) {
-              var routeColor = leg.routeColor ? leg.routeColor : '#008000';
+              var routeColor = leg.routeColor ? `#${leg.routeColor}` : '#008000';
+              console.log('Route Color:', leg.routeColor);
+
       
               var polyline = new Tmapv2.Polyline({
                 path: pathCoordinates,
