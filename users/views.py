@@ -157,12 +157,12 @@ class CustomPasswordResetView(PasswordResetView):
     success_url = reverse_lazy('password_reset_done')
 
     def form_valid(self, form):
-        messages.success(self.request, _("비밀번호 재설정 이메일이 발송되었습니다."))
+        messages.success(self.request, ("비밀번호 재설정 이메일이 발송되었습니다."))
         return super().form_valid(form)
     
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'registration/password_reset_confirm.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('login_view')
 
     def post(self, request, *args, **kwargs):
         new_password1 = request.POST.get('new_password1')
@@ -184,5 +184,10 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         messages.success(request, "비밀번호가 성공적으로 재설정되었습니다. 다시 로그인 해주세요.")
         return response
     
+class CustomPasswordResetView(PasswordResetView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user  # 사용자명 추가
+        return context
 
     
