@@ -150,6 +150,16 @@ class CustomPasswordChangeView(PasswordChangeView):
         messages.success(request, "비밀번호가 성공적으로 변경되었습니다.")
         return redirect(self.success_url)
     
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+
+    def form_valid(self, form):
+        messages.success(self.request, _("비밀번호 재설정 이메일이 발송되었습니다."))
+        return super().form_valid(form)
+    
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'registration/password_reset_confirm.html'
     success_url = reverse_lazy('login')
@@ -157,8 +167,8 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     def post(self, request, *args, **kwargs):
         new_password1 = request.POST.get('new_password1')
         new_password2 = request.POST.get('new_password2')
-        
-        # 비밀번호 일치 여부 확인
+
+        # 비밀번호가 일치하는지 확인
         if new_password1 != new_password2:
             messages.error(request, "새 비밀번호가 일치하지 않습니다.")
             return self.form_invalid(self.get_form())
@@ -168,28 +178,11 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         if password_error:
             messages.error(request, password_error)
             return self.form_invalid(self.get_form())
-        
-        # 비밀번호 재설정 후 메시지 추가
-        response = super().post(request, *args, **kwargs)
-        messages.success(request, "비밀번호가 성공적으로 재설정되었습니다.<br>다시 로그인 해주세요.")
 
+        # 유효성 검사를 통과하면 비밀번호 재설정 처리
+        response = super().post(request, *args, **kwargs)
+        messages.success(request, "비밀번호가 성공적으로 재설정되었습니다. 다시 로그인 해주세요.")
         return response
     
-class CustomPasswordResetView(PasswordResetView):
-    template_name = 'registration/password_reset_form.html'
-    email_template_name = 'registration/password_reset_email.html'
-    subject_template_name = 'registration/password_reset_subject.txt'
-    success_url = reverse_lazy('password_reset_done')
 
-    def get(self, request, *args, **kwargs):
-        # GET 요청 시 비밀번호 재설정 요청 폼을 렌더링
-        form = self.get_form_class()()
-        return self.render_to_response(self.get_context_data(form=form))
-
-    def post(self, request, *args, **kwargs):
-        # POST 요청 시 비밀번호 재설정 요청 처리
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    
