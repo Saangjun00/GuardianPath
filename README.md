@@ -86,8 +86,11 @@ python manage.py runserver
 ---
 
 ## 화면 구성 📺
-| 메인 페이지 | 로그인 페이지 |
+| 메인 페이지 | 즐겨찾기 및 검색기록 |
 | :----------------------: | :---------------------: |
+| ![image](https://github.com/user-attachments/assets/da34c45d-2d92-41e0-b5f6-f6a3adc5106d) | ![image](https://github.com/user-attachments/assets/5ac7f781-ca19-4c86-b635-abfb761eef49) |
+| **경로 결과 페이지(상세정보 포함)** |  **경로 결과 페이지(엘리베이터 사용자)**|
+| ![image](https://github.com/user-attachments/assets/de3eb478-7ea6-4f02-a7a3-bcc5bb09f2de) | ![image](https://github.com/user-attachments/assets/6806b7fe-9a67-472f-969a-77527df6d8f1) |
 
 ---
 
@@ -104,4 +107,119 @@ python manage.py runserver
 - 최근 10개의 경로 검색 기록 지원
 
 ---
+
+## 아키텍처
+
+### 시스템 아키텍처
+![GuardianPath System Architecture](https://github.com/user-attachments/assets/5650c348-bc6c-4c7a-ada9-727147170ef8)
+
+### 데이터베이스 설계도(ERD)
+![image](https://github.com/user-attachments/assets/cdc7ca12-5edd-49fd-abc4-290f55365567)
+
+### 디렉토리 구조
+```
+GuardianPath
+ ┣ .config
+ ┃ ┣ nginx
+ ┃ ┃ ┗ GuardianPath.conf
+ ┃ ┗ uwsgi
+ ┃ ┃ ┣ GuardianPath.ini
+ ┃ ┃ ┗ uwsgi.service
+ ┣ GuardianPath
+ ┃ ┣ static
+ ┃ ┣ asgi.py
+ ┃ ┣ middleware.py
+ ┃ ┣ settings.py
+ ┃ ┣ urls.py
+ ┃ ┣ wsgi.py
+ ┃ ┗ __init__.py
+ ┣ home
+ ┃ ┣ migrations
+ ┃ ┃ ┣ __pycache__
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ static
+ ┃ ┃ ┣ css
+ ┃ ┃ ┃ ┗ style.css
+ ┃ ┃ ┣ img
+ ┃ ┃ ┃ ┣ elevator-icon.png
+ ┃ ┃ ┃ ┣ escalator-icon.png
+ ┃ ┃ ┃ ┣ general-icon.png
+ ┃ ┃ ┃ ┣ gps-icon.png
+ ┃ ┃ ┃ ┗ profile-icon.png
+ ┃ ┃ ┗ js
+ ┃ ┃ ┃ ┗ home.js
+ ┃ ┣ templates
+ ┃ ┃ ┗ home.html
+ ┃ ┣ admin.py
+ ┃ ┣ apps.py
+ ┃ ┣ models.py
+ ┃ ┣ tests.py
+ ┃ ┣ urls.py
+ ┃ ┣ views.py
+ ┃ ┗ __init__.py
+ ┣ map
+ ┃ ┣ migrations
+ ┃ ┃ ┣ 0001_initial.py
+ ┃ ┃ ┣ 0002_searchhistory.py
+ ┃ ┃ ┣ 0003_elevatorlocation_escalatorlocation.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ static
+ ┃ ┃ ┣ css
+ ┃ ┃ ┣ img
+ ┃ ┃ ┃ ┣ departure-marker.png
+ ┃ ┃ ┃ ┣ destination-marker.png
+ ┃ ┃ ┃ ┣ ele_img.png
+ ┃ ┃ ┃ ┗ esc_img.png
+ ┃ ┃ ┗ js
+ ┃ ┃ ┃ ┗ map.js
+ ┃ ┣ templates
+ ┃ ┃ ┗ search_results.html
+ ┃ ┣ admin.py
+ ┃ ┣ apps.py
+ ┃ ┣ models.py
+ ┃ ┣ tests.py
+ ┃ ┣ urls.py
+ ┃ ┣ views.py
+ ┃ ┗ __init__.py
+ ┣ staticfiles
+ ┃ ┣ css
+ ┃ ┣ img
+ ┃ ┗ js
+ ┣ users
+ ┃ ┣ migrations
+ ┃ ┃ ┣ 0001_initial.py
+ ┃ ┃ ┗ __init__.py
+ ┃ ┣ static
+ ┃ ┃ ┣ css
+ ┃ ┃ ┃ ┗ login_style.css
+ ┃ ┃ ┣ img
+ ┃ ┃ ┃ ┣ kakao_login_medium_narrow.png
+ ┃ ┃ ┃ ┗ web_light_sq_SI@1x.png
+ ┃ ┃ ┗ js
+ ┃ ┃ ┃ ┗ main.js
+ ┃ ┣ templates
+ ┃ ┃ ┣ registration
+ ┃ ┃ ┃ ┣ password_change.html
+ ┃ ┃ ┃ ┣ password_change_success.html
+ ┃ ┃ ┃ ┣ password_reset_confirm.html
+ ┃ ┃ ┃ ┣ password_reset_done.html
+ ┃ ┃ ┃ ┣ password_reset_email.html
+ ┃ ┃ ┃ ┣ password_reset_form.html
+ ┃ ┃ ┃ ┗ password_reset_subject.txt
+ ┃ ┃ ┣ login.html
+ ┃ ┃ ┗ profile.html
+ ┃ ┣ adapters.py
+ ┃ ┣ admin.py
+ ┃ ┣ apps.py
+ ┃ ┣ models.py
+ ┃ ┣ tests.py
+ ┃ ┣ urls.py
+ ┃ ┣ views.py
+ ┃ ┗ __init__.py
+ ┣ .env
+ ┣ .gitignore
+ ┣ manage.py
+ ┗ requirements.txt
+```
+
 
