@@ -54,15 +54,15 @@ cd guardianPath
 ### 가상 환경 설정 및 패키지 설치
 ```bash
 python -m venv venv
-source venv/Scripts/activate # (Mac `venv\bin\activate`)   
+source venv/Scripts/activate # (Mac인 경우 venv\bin\activate)   
 pip install -r requirements.txt
 ```
 
 ### 환경 변수 설정
-**.env** 파일을 프로젝트 루트에 생성하고, 실제 값으로 변경하여 환경 변수를 추가합니다.
-```.env
+```.env``` 파일을 프로젝트 루트에 생성하고, 실제 값으로 변경하여 환경 변수를 추가합니다.
+```env
 # Django Secret Key
-SECRET_KEY=your_django_secret_key_here
+SECRET_KEY=your_django_secret_key
 
 # Database 설정
 DB_NAME=your_db_name
@@ -117,7 +117,7 @@ python manage.py runserver
 ![image](https://github.com/user-attachments/assets/cdc7ca12-5edd-49fd-abc4-290f55365567)
 
 ### 디렉토리 구조
-```
+```bash
 GuardianPath
  ┣ .config
  ┃ ┣ nginx
